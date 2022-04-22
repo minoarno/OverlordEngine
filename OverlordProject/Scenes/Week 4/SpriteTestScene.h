@@ -1,7 +1,7 @@
 #pragma once
+#include "Scenegraph/GameScene.h"
 
 class TextureData;
-
 class SpriteTestScene final : public GameScene
 {
 public:

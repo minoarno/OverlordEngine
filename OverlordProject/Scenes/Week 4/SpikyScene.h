@@ -1,6 +1,6 @@
 #pragma once
 #include "Utils/EffectHelper.h"
-
+#include "Scenegraph/GameScene.h"
 class SpikyScene final: public GameScene
 {
 public:

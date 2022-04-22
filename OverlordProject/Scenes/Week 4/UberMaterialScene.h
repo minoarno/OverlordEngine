@@ -1,4 +1,5 @@
 #pragma once
+#include "Scenegraph/GameScene.h"
 
 class UberMaterialScene final : public GameScene
 {

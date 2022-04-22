@@ -29,8 +29,8 @@ void SpikeyMaterial::OnUpdateModelVariables(const SceneContext& sceneContext, co
 	UNREFERENCED_PARAMETER(sceneContext);
 	UNREFERENCED_PARAMETER(pModelComponent);
 
-	//if (m_pDiffuseTexture && m_pDiffuseSRVvariable)
-	//{
-	//	m_pDiffuseSRVvariable->SetResource(m_pDiffuseTexture->GetShaderResourceView());
-	//}
+	if (m_pDiffuseTexture && m_pDiffuseSRVvariable)
+	{
+		m_pDiffuseSRVvariable->SetResource(m_pDiffuseTexture->GetShaderResourceView());
+	}
 }

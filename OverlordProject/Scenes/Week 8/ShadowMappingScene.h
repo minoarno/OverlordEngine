@@ -1,4 +1,6 @@
 #pragma once
+#include "Scenegraph/GameScene.h"
+
 class ShadowMappingScene final : public GameScene
 {
 public:

@@ -31,8 +31,8 @@ void DiffuseMaterial::OnUpdateModelVariables(const SceneContext& sceneContext, c
 	UNREFERENCED_PARAMETER(pModelComponent);
 
 
-	/*if (m_pDiffuseTexture && m_pDiffuseSRVvariable)
+	if (m_pDiffuseTexture && m_pDiffuseSRVvariable)
 	{
 		m_pDiffuseSRVvariable->SetResource(m_pDiffuseTexture->GetShaderResourceView());
-	}*/
+	}
 }

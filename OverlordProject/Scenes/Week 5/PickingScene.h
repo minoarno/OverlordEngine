@@ -1,4 +1,6 @@
 #pragma once
+#include "Scenegraph/GameScene.h"
+
 class PickingScene : public GameScene
 {
 public:
