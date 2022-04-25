@@ -19,7 +19,7 @@ m_Counter(105.0f)
 void SpriteTestScene::Initialize()
 {
 	m_pObj = new GameObject();
-	m_pObj->AddComponent(new SpriteComponent(L"Textures/Chair_Dark.dds", DirectX::XMFLOAT2(0.5f, 0.5f), DirectX::XMFLOAT4(1, 1, 1, 0.5f)));
+	m_pObj->AddComponent(new SpriteComponent(L"Textures/TestSprite.jpg", DirectX::XMFLOAT2(0.5f, 0.5f), DirectX::XMFLOAT4(1, 1, 1, 0.5f)));
 	AddChild(m_pObj);
 
 	m_pObj->GetTransform()->Translate(500.f, 350.f, .9f);
@@ -40,4 +40,5 @@ void SpriteTestScene::Update()
 }
 
 void SpriteTestScene::Draw()
-{}
+{
+}
