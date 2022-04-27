@@ -17,7 +17,7 @@ protected:
 	void Initialize() override;
 	void Update() override;
 	void Draw() override;
-
+	void OnGUI() override;
 private:
 	float m_FpsInterval = 0.f;
 	float m_Counter = 0.f;

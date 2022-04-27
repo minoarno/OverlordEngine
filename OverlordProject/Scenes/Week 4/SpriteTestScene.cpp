@@ -23,7 +23,7 @@ void SpriteTestScene::Initialize()
 	AddChild(m_pObj);
 
 	m_pObj->GetTransform()->Translate(500.f, 350.f, .9f);
-	m_pObj->GetTransform()->Scale(1.f, 2.f, 1.f);
+	m_pObj->GetTransform()->Scale(1.f, 1.f, 1.f);
 }
 
 void SpriteTestScene::Update()
@@ -36,9 +36,13 @@ void SpriteTestScene::Update()
 		Logger::LogInfo(L"FPS: %i", m_SceneContext.pGameTime->GetFPS());
 	}
 
-	m_pObj->GetTransform()->Rotate(0, 0, DirectX::XM_PIDIV2 * m_SceneContext.pGameTime->GetTotal(), false);
+	//m_pObj->GetTransform()->Rotate(0, 0, DirectX::XM_PIDIV2 * m_SceneContext.pGameTime->GetTotal(), false);
 }
 
 void SpriteTestScene::Draw()
+{
+}
+
+void SpriteTestScene::OnGUI()
 {
 }
