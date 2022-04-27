@@ -4,8 +4,8 @@
 /*LAB Content*/
 //#define W3
 //#define W4
-#define W5
-//#define W6
+//#define W5
+#define W6
 //#define W7
 //#define W8
 //#define W9
@@ -38,8 +38,8 @@
 
 #ifdef W6
 #include "Scenes/Week 6/SoftwareSkinningScene_1.h"
-#include "Scenes/Week 6/SoftwareSkinningScene_2.h"
-#include "Scenes/Week 6/SoftwareSkinningScene_3.h"
+//#include "Scenes/Week 6/SoftwareSkinningScene_2.h"
+//#include "Scenes/Week 6/SoftwareSkinningScene_3.h"
 #endif
 
 #ifdef W7
@@ -117,8 +117,8 @@ void MainGame::Initialize()
 
 #ifdef W6
 	SceneManager::Get()->AddGameScene(new SoftwareSkinningScene_1());
-	SceneManager::Get()->AddGameScene(new SoftwareSkinningScene_2());
-	SceneManager::Get()->AddGameScene(new SoftwareSkinningScene_3());
+	//SceneManager::Get()->AddGameScene(new SoftwareSkinningScene_2());
+	//SceneManager::Get()->AddGameScene(new SoftwareSkinningScene_3());
 #endif
 
 #ifdef W7
