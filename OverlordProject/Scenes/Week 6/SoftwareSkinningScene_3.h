@@ -27,14 +27,18 @@ private:
 	//PART 2 [ADDED]
 	struct VertexSoftwareSkinned
 	{
-		VertexSoftwareSkinned(XMFLOAT3 position, XMFLOAT3 normal, XMFLOAT4 color) :
+		VertexSoftwareSkinned(XMFLOAT3 position, XMFLOAT3 normal, XMFLOAT4 color,float weight0, float weight1) :
 			transformedVertex{ position,normal,color },
-			originalVertex{ position,normal,color }
+			originalVertex{ position,normal,color },
+			blendWeight0{weight0},
+			blendWeight1{weight1}
 		{
 		}
 
 		VertexPosNormCol transformedVertex{};
 		VertexPosNormCol originalVertex{};
+		float blendWeight0;
+		float blendWeight1;
 	};
 
 	void InitializeVertices(float length);
