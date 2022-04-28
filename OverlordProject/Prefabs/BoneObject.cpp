@@ -9,7 +9,7 @@ BoneObject::BoneObject(BaseMaterial* pMaterial, float length)
 
 void BoneObject::AddBone(BoneObject* pBone)
 {
-	pBone->GetTransform()->Translate(0.f, 0.f, -m_Length);
+	pBone->GetTransform()->Translate(m_Length,0.f, 0.f);
 	AddChild(pBone);
 }
 
@@ -17,8 +17,9 @@ void BoneObject::Initialize(const SceneContext&)
 {
 	GameObject* pEmpty = new GameObject();
 	AddChild(pEmpty);
-	ModelComponent* pModel{ new ModelComponent{ L"Resources/Meshes/Bone.ovm" } };
+	ModelComponent* pModel{ new ModelComponent{ L"Meshes/Bone.ovm" } };
 	pModel->SetMaterial(m_pMaterial);
 	pEmpty->GetTransform()->Rotate(0,-90,0);
 	pEmpty->GetTransform()->Scale(m_Length, m_Length, m_Length);
+	pEmpty->AddComponent(pModel);
 }

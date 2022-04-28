@@ -103,7 +103,7 @@ void MainGame::Initialize()
 #endif
 
 #ifdef W4
-	//SceneManager::Get()->AddGameScene(new ModelTestScene());
+	SceneManager::Get()->AddGameScene(new ModelTestScene());
 	//SceneManager::Get()->AddGameScene(new UberMaterialScene());
 	//SceneManager::Get()->AddGameScene(new SpikyScene());
 	SceneManager::Get()->AddGameScene(new SpriteTestScene());
@@ -116,7 +116,7 @@ void MainGame::Initialize()
 #endif
 
 #ifdef W6
-	SceneManager::Get()->AddGameScene(new SoftwareSkinningScene_1());
+	SceneManager::Get()->AddGameScene(new SoftwareSkinningScene_2());
 	//SceneManager::Get()->AddGameScene(new SoftwareSkinningScene_2());
 	//SceneManager::Get()->AddGameScene(new SoftwareSkinningScene_3());
 #endif

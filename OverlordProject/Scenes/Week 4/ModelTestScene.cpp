@@ -43,7 +43,7 @@ void ModelTestScene::Initialize()
 
 	//ColorMaterial* colorMat = MaterialManager::Get()->CreateMaterial<ColorMaterial>();
 	//.pMaterialManager->AddMaterial(new ColorMaterial(), 0);
-	//model->SetMaterial(1);
+	///model->SetMaterial(1);
 	
 
 
@@ -54,7 +54,7 @@ void ModelTestScene::Initialize()
 	// Build and Run
 	DiffuseMaterial* diffuse = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
 	diffuse->SetDiffuseMaterial(L"Textures/Chair_Dark.dds");
-	model->SetMaterial(2);
+	model->SetMaterial(diffuse);
 
 	//6. Attach a rigidbody component (pure-dynamic)
 	//7. Attach a collider component (Use a PxConvexMeshGeometry [chair.ovpc])

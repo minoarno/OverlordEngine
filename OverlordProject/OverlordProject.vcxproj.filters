@@ -28,6 +28,7 @@
     <ClCompile Include="Scenes\Week 4\UberMaterialScene.cpp" />
     <ClCompile Include="Prefabs\BoneObject.cpp" />
     <ClCompile Include="Scenes\Week 6\SoftwareSkinningScene_1.cpp" />
+    <ClCompile Include="Scenes\Week 6\SoftwareSkinningScene_2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -56,5 +57,6 @@
     <ClInclude Include="Scenes\Week 4\UberMaterialScene.h" />
     <ClInclude Include="Prefabs\BoneObject.h" />
     <ClInclude Include="Scenes\Week 6\SoftwareSkinningScene_1.h" />
+    <ClInclude Include="Scenes\Week 6\SoftwareSkinningScene_2.h" />
   </ItemGroup>
 </Project>
