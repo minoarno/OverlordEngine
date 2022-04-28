@@ -10,10 +10,17 @@ public:
 	BoneObject& operator=(BoneObject&& other) noexcept = delete;
 
 	void AddBone(BoneObject* pBone);
+
+	//PART_2 [ADDED]
+	const DirectX::XMFLOAT4X4 GetBindPose() { return m_BindPose; }
+	void CalculateBindPose();
 protected:
 	void Initialize(const SceneContext&) override;
 private:
 	float m_Length{};
 	BaseMaterial* m_pMaterial{};
+
+	//PART_2 [ADDED]
+	DirectX::XMFLOAT4X4 m_BindPose{};
 };
 

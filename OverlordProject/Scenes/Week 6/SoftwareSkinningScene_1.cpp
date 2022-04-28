@@ -4,7 +4,7 @@
 #include "Prefabs/BoneObject.h"
 #include "../OverlordProject/Materials/ColorMaterial.h"
 
-void SoftwareSkinningScene_2::Initialize()
+void SoftwareSkinningScene_1::Initialize()
 {
 	ColorMaterial *pMaterial = MaterialManager::Get()->CreateMaterial<ColorMaterial>();
 
@@ -17,7 +17,7 @@ void SoftwareSkinningScene_2::Initialize()
 	AddChild(pRoot);
 }
 
-void SoftwareSkinningScene_2::Update()
+void SoftwareSkinningScene_1::Update()
 {
 	m_BoneRotation += float(m_RotationSign) * 45.f * m_SceneContext.pGameTime->GetElapsed();
 	m_pBone0->GetTransform()->Rotate(0.f, 0.f, m_BoneRotation);
@@ -26,6 +26,6 @@ void SoftwareSkinningScene_2::Update()
 	if ((45.f <= m_BoneRotation) || (m_BoneRotation <= -45.f))	m_RotationSign *= -1;
 }
 
-void SoftwareSkinningScene_2::OnGUI()
+void SoftwareSkinningScene_1::OnGUI()
 {
 }

@@ -1,15 +1,15 @@
 #pragma once
 class BoneObject;
 
-class SoftwareSkinningScene_2 final : public GameScene
+class SoftwareSkinningScene_3 final : public GameScene
 {
 public:
-	SoftwareSkinningScene_2() : GameScene(L"SoftwareSkinningScene_2") {};
-	~SoftwareSkinningScene_2() override = default;
-	SoftwareSkinningScene_2(const SoftwareSkinningScene_2& other) = delete;
-	SoftwareSkinningScene_2(SoftwareSkinningScene_2&& other) noexcept = delete;
-	SoftwareSkinningScene_2& operator=(const SoftwareSkinningScene_2& other) = delete;
-	SoftwareSkinningScene_2& operator=(SoftwareSkinningScene_2&& other) noexcept = delete;
+	SoftwareSkinningScene_3() : GameScene(L"SoftwareSkinningScene_2") {};
+	~SoftwareSkinningScene_3() override = default;
+	SoftwareSkinningScene_3(const SoftwareSkinningScene_3& other) = delete;
+	SoftwareSkinningScene_3(SoftwareSkinningScene_3&& other) noexcept = delete;
+	SoftwareSkinningScene_3& operator=(const SoftwareSkinningScene_3& other) = delete;
+	SoftwareSkinningScene_3& operator=(SoftwareSkinningScene_3&& other) noexcept = delete;
 
 protected:
 	void Initialize() override;
@@ -28,7 +28,7 @@ private:
 	struct VertexSoftwareSkinned
 	{
 		VertexSoftwareSkinned(XMFLOAT3 position, XMFLOAT3 normal, XMFLOAT4 color) :
-			transformedVertex{position,normal,color},
+			transformedVertex{ position,normal,color },
 			originalVertex{ position,normal,color }
 		{
 		}

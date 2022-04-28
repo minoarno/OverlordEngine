@@ -38,7 +38,7 @@
 
 #ifdef W6
 #include "Scenes/Week 6/SoftwareSkinningScene_1.h"
-//#include "Scenes/Week 6/SoftwareSkinningScene_2.h"
+#include "Scenes/Week 6/SoftwareSkinningScene_2.h"
 //#include "Scenes/Week 6/SoftwareSkinningScene_3.h"
 #endif
 
