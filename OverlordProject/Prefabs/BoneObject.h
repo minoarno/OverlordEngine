@@ -12,7 +12,7 @@ public:
 	void AddBone(BoneObject* pBone);
 
 	//PART_2 [ADDED]
-	const DirectX::XMFLOAT4X4 GetBindPose() { return m_BindPose; }
+	const XMFLOAT4X4& GetBindPose() const { return m_BindPose; }
 	void CalculateBindPose();
 protected:
 	void Initialize(const SceneContext&) override;
@@ -21,6 +21,6 @@ private:
 	BaseMaterial* m_pMaterial{};
 
 	//PART_2 [ADDED]
-	DirectX::XMFLOAT4X4 m_BindPose{};
+	XMFLOAT4X4 m_BindPose{};
 };
 

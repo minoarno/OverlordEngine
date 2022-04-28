@@ -21,4 +21,7 @@ private:
 	BoneObject* m_pBone0{}, * m_pBone1{};
 	float m_BoneRotation{};
 	int m_RotationSign{ 1 };
+
+	XMFLOAT3 m_Bone0Rotation{}, m_Bone1Rotation{};
+	bool m_AutoRotate{ true };
 };

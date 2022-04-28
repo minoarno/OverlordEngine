@@ -4,7 +4,7 @@ class BoneObject;
 class SoftwareSkinningScene_3 final : public GameScene
 {
 public:
-	SoftwareSkinningScene_3() : GameScene(L"SoftwareSkinningScene_2") {};
+	SoftwareSkinningScene_3() : GameScene(L"SoftwareSkinningScene_3") {};
 	~SoftwareSkinningScene_3() override = default;
 	SoftwareSkinningScene_3(const SoftwareSkinningScene_3& other) = delete;
 	SoftwareSkinningScene_3(SoftwareSkinningScene_3&& other) noexcept = delete;
@@ -37,9 +37,8 @@ private:
 		VertexPosNormCol originalVertex{};
 	};
 
-	void InitializeVertices()
-	{
-		MeshDrawComponent* m_pMeshDrawer{};
-		std::vector<VertexSoftwareSkinned> m_SkinnedVertices{};
-	}
+	void InitializeVertices(float length);
+
+	MeshDrawComponent* m_pMeshDrawer{};
+	std::vector<VertexSoftwareSkinned> m_SkinnedVertices{};
 };

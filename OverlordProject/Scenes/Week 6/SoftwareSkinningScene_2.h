@@ -1,4 +1,5 @@
 #pragma once
+
 class BoneObject;
 
 class SoftwareSkinningScene_2 final : public GameScene
@@ -37,9 +38,8 @@ private:
 		VertexPosNormCol originalVertex{};
 	};
 
-	void InitializeVertices()
-	{
-		MeshDrawComponent* m_pMeshDrawer{};
-		std::vector<VertexSoftwareSkinned> m_SkinnedVertices{};
-	}
+	void InitializeVertices(float length);
+
+	MeshDrawComponent* m_pMeshDrawer {};
+	std::vector<VertexSoftwareSkinned> m_SkinnedVertices{};
 };
