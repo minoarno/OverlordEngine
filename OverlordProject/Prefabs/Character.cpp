@@ -82,8 +82,8 @@ void Character::Update(const SceneContext& sceneContext)
 
 		//Retrieve the TransformComponent
 		//Retrieve the forward & right vector (as XMVECTOR) from the TransformComponent
-		XMVECTOR forward = DirectX::XMLoadFloat3(&GetTransform()->GetForward());
-		XMVECTOR right = DirectX::XMLoadFloat3(&GetTransform()->GetRight());
+		XMVECTOR forward = DirectX::XMLoadFloat3(&GetTransform()->GetForward()) * move.y;
+		XMVECTOR right = DirectX::XMLoadFloat3(&GetTransform()->GetRight()) * move.x;
 
 		//***************
 		//CAMERA ROTATION
@@ -92,10 +92,13 @@ void Character::Update(const SceneContext& sceneContext)
 		//Make sure this calculated on a framerate independent way and uses CharacterDesc::rotationSpeed.
 		//Rotate this character based on the TotalPitch (X) and TotalYaw (Y)
 
-
+		float elapsedTime  = sceneContext.pGameTime->GetElapsed();
+		m_TotalYaw += look.x * m_CharacterDesc.rotationSpeed * elapsedTime;
+		m_TotalPitch += look.y * m_CharacterDesc.rotationSpeed * elapsedTime;
 
 		//********
 		//MOVEMENT
+
 
 		//## Horizontal Velocity (Forward/Backward/Right/Left)
 		//Calculate the current move acceleration for this frame (m_MoveAcceleration * ElapsedTime)
@@ -106,11 +109,33 @@ void Character::Update(const SceneContext& sceneContext)
 		//Else (character is not moving, or stopped moving)
 			//Decrease the current MoveSpeed with the current Acceleration (m_MoveSpeed)
 			//Make sure the current MoveSpeed doesn't get smaller than zero
+		if (abs(move.x) < epsilon || abs(move.y) < epsilon)
+		{
+			m_MoveAcceleration += m_MoveAcceleration * elapsedTime;
+			XMStoreFloat3(&m_CurrentDirection, (forward + right) * m_MoveAcceleration);
+			
+			m_MoveSpeed += m_MoveAcceleration;
+			if (m_MoveSpeed > m_CharacterDesc.maxMoveSpeed)
+			{
+				m_MoveSpeed = m_CharacterDesc.maxMoveSpeed;
+			}
+		}
+		else
+		{
+			m_MoveSpeed -= m_MoveSpeed * elapsedTime;
+			if (m_MoveSpeed < 0)
+			{
+				m_MoveSpeed = 0;
+			}
+		}
 
 		//Now we can calculate the Horizontal Velocity which should be stored in m_TotalVelocity.xz
 		//Calculate the horizontal velocity (m_CurrentDirection * MoveSpeed)
 		//Set the x/z component of m_TotalVelocity (horizontal_velocity x/z)
 		//It's important that you don't overwrite the y component of m_TotalVelocity (contains the vertical velocity)
+		auto horizontalVelocity = DirectX::XMFLOAT2{ m_CurrentDirection.x * m_MoveSpeed,m_CurrentDirection.z * m_MoveSpeed };
+		m_TotalVelocity.x = horizontalVelocity.x;
+		m_TotalVelocity.z = horizontalVelocity.y;
 
 		//## Vertical Movement (Jump/Fall)
 		//If the Controller Component is NOT grounded (= freefall)
@@ -120,6 +145,19 @@ void Character::Update(const SceneContext& sceneContext)
 			//Set m_TotalVelocity.y equal to CharacterDesc::JumpSpeed
 		//Else (=Character is grounded, no input pressed)
 			//m_TotalVelocity.y is zero
+		if (!m_pControllerComponent->GetCollisionFlags().isSet(PxControllerCollisionFlag::eCOLLISION_DOWN))
+		{
+			m_TotalVelocity.y -= m_FallAcceleration;
+			if (m_TotalVelocity.y < -m_CharacterDesc.maxFallSpeed)
+			{
+				m_TotalVelocity.y = -m_CharacterDesc.maxFallSpeed;
+			}
+		}
+		else if (true)
+		{
+
+		}
+
 
 		//************
 		//DISPLACEMENT
