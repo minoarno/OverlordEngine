@@ -15,7 +15,7 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	//Camera
 	const auto pCamera = AddChild(new FixedCamera());
 	m_pCameraComponent = pCamera->GetComponent<CameraComponent>();
-	//m_pCameraComponent->SetActive(true); //Uncomment to make this camera the active camera
+	m_pCameraComponent->SetActive(true); //Uncomment to make this camera the active camera
 
 	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * .5f, 0.f);
 }
@@ -24,24 +24,53 @@ void Character::Update(const SceneContext& /*sceneContext*/)
 {
 	if (m_pCameraComponent->IsActive())
 	{
-		//constexpr float epsilon{ 0.01f }; //Constant that can be used to compare if a float is near zero
+		constexpr float epsilon{ 0.01f }; //Constant that can be used to compare if a float is near zero
 
 		//***************
 		//HANDLE INPUT
 
 		//## Input Gathering (move)
-		//XMFLOAT2 move; //Uncomment
+		XMFLOAT2 move; //Uncomment
 		//move.y should contain a 1 (Forward) or -1 (Backward) based on the active input (check corresponding actionId in m_CharacterDesc)
 		//Optional: if move.y is near zero (abs(move.y) < epsilon), you could use the ThumbStickPosition.y for movement
 
+		if (move.x == m_CharacterDesc.actionId_MoveForward)
+		{
+			
+		}
+		else if (move.x == m_CharacterDesc.actionId_MoveBackward)
+		{
+
+		}
+		else if (abs(move.y) < epsilon)
+		{
+
+		}
+
 		//move.x should contain a 1 (Right) or -1 (Left) based on the active input (check corresponding actionId in m_CharacterDesc)
 		//Optional: if move.x is near zero (abs(move.x) < epsilon), you could use the Left ThumbStickPosition.x for movement
+		if (move.x == m_CharacterDesc.actionId_MoveLeft)
+		{
+
+		}
+		else if (move.x == m_CharacterDesc.actionId_MoveRight)
+		{
+
+		}
+		else if (abs(move.x) < epsilon)
+		{
+
+		}
 
 		//## Input Gathering (look)
-		//XMFLOAT2 look{ 0.f, 0.f }; //Uncomment
+		XMFLOAT2 look{ 0.f, 0.f }; //Uncomment
 		//Only if the Left Mouse Button is Down >
 			// Store the MouseMovement in the local 'look' variable (cast is required)
 		//Optional: in case look.x AND look.y are near zero, you could use the Right ThumbStickPosition for look
+		if (abs(look.x) < epsilon && abs(look.y) < epsilon)
+		{
+
+		}
 
 		//************************
 		//GATHERING TRANSFORM INFO
