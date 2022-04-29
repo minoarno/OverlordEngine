@@ -295,14 +295,18 @@ MeshFilter* MeshFilterLoader::ParseOVM20(BinaryReader* pReader)
 						subMesh.layoutElements |= ILSemantic::POSITION;
 						subMesh.positions.reserve(subMesh.vertexCount);
 						for (size_t i{ 0 }; i < subMesh.vertexCount; ++i)
+						{
 							subMesh.positions.emplace_back(pReader->Read<XMFLOAT3>());
+						}
 					}
 					break;
 					case OVM_HEADER_MESHES::INDICES:
 					{
 						subMesh.indices.reserve(subMesh.indexCount);
 						for (size_t i{ 0 }; i < subMesh.indexCount; ++i)
+						{
 							subMesh.indices.emplace_back(pReader->Read <UINT32>());
+						}
 					}
 					break;
 					case OVM_HEADER_MESHES::NORMALS:
@@ -310,7 +314,9 @@ MeshFilter* MeshFilterLoader::ParseOVM20(BinaryReader* pReader)
 						subMesh.layoutElements |= ILSemantic::NORMAL;
 						subMesh.normals.reserve(subMesh.vertexCount);
 						for (size_t i{ 0 }; i < subMesh.vertexCount; ++i)
+						{
 							subMesh.normals.emplace_back(pReader->Read<XMFLOAT3>());
+						}
 					}
 					break;
 					case OVM_HEADER_MESHES::TANGENTS:
@@ -318,7 +324,9 @@ MeshFilter* MeshFilterLoader::ParseOVM20(BinaryReader* pReader)
 						subMesh.layoutElements |= ILSemantic::TANGENT;
 						subMesh.tangents.reserve(subMesh.vertexCount);
 						for (size_t i{ 0 }; i < subMesh.vertexCount; ++i)
+						{
 							subMesh.tangents.emplace_back(pReader->Read<XMFLOAT3>());
+						}
 					}
 					break;
 					case OVM_HEADER_MESHES::BINORMALS:
@@ -326,7 +334,9 @@ MeshFilter* MeshFilterLoader::ParseOVM20(BinaryReader* pReader)
 						subMesh.layoutElements |= ILSemantic::BINORMAL;
 						subMesh.binormals.reserve(subMesh.vertexCount);
 						for (size_t i{ 0 }; i < subMesh.vertexCount; ++i)
+						{
 							subMesh.binormals.emplace_back(pReader->Read<XMFLOAT3>());
+						}
 					}
 					break;
 					case OVM_HEADER_MESHES::COLORS:
@@ -334,7 +344,9 @@ MeshFilter* MeshFilterLoader::ParseOVM20(BinaryReader* pReader)
 						subMesh.layoutElements |= ILSemantic::COLOR;
 						subMesh.colors.reserve(subMesh.vertexCount);
 						for (size_t i{ 0 }; i < subMesh.vertexCount; ++i)
+						{
 							subMesh.colors.emplace_back(pReader->Read<XMFLOAT4>());
+						}
 					}
 					break;
 					case OVM_HEADER_MESHES::TEXCOORDS:
@@ -343,7 +355,9 @@ MeshFilter* MeshFilterLoader::ParseOVM20(BinaryReader* pReader)
 						const auto texCoordCount = static_cast<size_t>(subMesh.vertexCount) * subMesh.uvChannelCount;
 						subMesh.texCoords.reserve(texCoordCount);
 						for (size_t i{ 0 }; i < texCoordCount; ++i)
+						{
 							subMesh.texCoords.emplace_back(pReader->Read<XMFLOAT2>());
+						}
 					}
 					break;
 					case OVM_HEADER_MESHES::BLENDINDICES:
@@ -351,7 +365,9 @@ MeshFilter* MeshFilterLoader::ParseOVM20(BinaryReader* pReader)
 						subMesh.layoutElements |= ILSemantic::BLENDINDICES;
 						subMesh.blendIndices.reserve(subMesh.vertexCount);
 						for (size_t i{ 0 }; i < subMesh.vertexCount; ++i)
+						{
 							subMesh.blendIndices.emplace_back(pReader->Read<XMFLOAT4>());
+						}
 					}
 					break;
 					case OVM_HEADER_MESHES::BLENDWEIGHTS:
@@ -359,7 +375,9 @@ MeshFilter* MeshFilterLoader::ParseOVM20(BinaryReader* pReader)
 						subMesh.layoutElements |= ILSemantic::BLENDWEIGHTS;
 						subMesh.blendWeights.reserve(subMesh.vertexCount);
 						for (size_t i{ 0 }; i < subMesh.vertexCount; ++i)
+						{
 							subMesh.blendWeights.emplace_back(pReader->Read<XMFLOAT4>());
+						}
 					}
 					break;
 					}

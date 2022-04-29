@@ -23,4 +23,11 @@ void DiffuseMaterial_Skinned::OnUpdateModelVariables(const SceneContext&, const 
 	//Retrieve the BoneTransforms from the Animator
 	//Set the 'gBones' variable of the effect (MatrixArray) > BoneTransforms
 	UNREFERENCED_PARAMETER(pModel);
+
+	auto animator = pModel->GetAnimator();
+	ASSERT_NULL_(animator);
+
+	SetVariable_MatrixArray(L"gBones",
+		(float*)animator->GetBoneTransforms().data(),
+		(UINT)animator->GetBoneTransforms().size());
 }
