@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Character.h"
+#include "PhysX/PhysxProxy.h"
+#include "Scenegraph/GameScene.h"
 
 Character::Character(const CharacterDesc& characterDesc) :
 	m_CharacterDesc{ characterDesc },
@@ -20,7 +22,7 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * .5f, 0.f);
 }
 
-void Character::Update(const SceneContext& /*sceneContext*/)
+void Character::Update(const SceneContext& sceneContext)
 {
 	if (m_pCameraComponent->IsActive())
 	{
@@ -34,42 +36,45 @@ void Character::Update(const SceneContext& /*sceneContext*/)
 		//move.y should contain a 1 (Forward) or -1 (Backward) based on the active input (check corresponding actionId in m_CharacterDesc)
 		//Optional: if move.y is near zero (abs(move.y) < epsilon), you could use the ThumbStickPosition.y for movement
 
-		if (move.x == m_CharacterDesc.actionId_MoveForward)
+		if (sceneContext.pInput->IsActionTriggered(m_CharacterDesc.actionId_MoveForward)) //forward
 		{
-			
+			move.y = 1;
 		}
-		else if (move.x == m_CharacterDesc.actionId_MoveBackward)
+		else if (sceneContext.pInput->IsActionTriggered(m_CharacterDesc.actionId_MoveBackward)) //backward
 		{
-
+			move.y = -1;
 		}
 		else if (abs(move.y) < epsilon)
 		{
-
+			move.y = sceneContext.pInput->GetThumbstickPosition().y;
 		}
 
 		//move.x should contain a 1 (Right) or -1 (Left) based on the active input (check corresponding actionId in m_CharacterDesc)
 		//Optional: if move.x is near zero (abs(move.x) < epsilon), you could use the Left ThumbStickPosition.x for movement
-		if (move.x == m_CharacterDesc.actionId_MoveLeft)
+		if (sceneContext.pInput->IsActionTriggered(m_CharacterDesc.actionId_MoveRight)) //right
 		{
-
+			move.x = 1;
 		}
-		else if (move.x == m_CharacterDesc.actionId_MoveRight)
+		else if (sceneContext.pInput->IsActionTriggered(m_CharacterDesc.actionId_MoveLeft)) //left
 		{
-
+			move.x = -1;
 		}
-		else if (abs(move.x) < epsilon)
+		else if (abs(move.y) < epsilon)
 		{
-
+			move.x = sceneContext.pInput->GetThumbstickPosition().x;
 		}
+		
 
 		//## Input Gathering (look)
 		XMFLOAT2 look{ 0.f, 0.f }; //Uncomment
 		//Only if the Left Mouse Button is Down >
 			// Store the MouseMovement in the local 'look' variable (cast is required)
 		//Optional: in case look.x AND look.y are near zero, you could use the Right ThumbStickPosition for look
+		auto mouseMovement = sceneContext.pInput->GetMouseMovement();
+		look = { mouseMovement.x,mouseMovement.y };
 		if (abs(look.x) < epsilon && abs(look.y) < epsilon)
 		{
-
+			look = sceneContext.pInput->GetThumbstickPosition(false);
 		}
 
 		//************************
@@ -77,6 +82,8 @@ void Character::Update(const SceneContext& /*sceneContext*/)
 
 		//Retrieve the TransformComponent
 		//Retrieve the forward & right vector (as XMVECTOR) from the TransformComponent
+		XMVECTOR forward = DirectX::XMLoadFloat3(&GetTransform()->GetForward());
+		XMVECTOR right = DirectX::XMLoadFloat3(&GetTransform()->GetRight());
 
 		//***************
 		//CAMERA ROTATION
@@ -84,6 +91,8 @@ void Character::Update(const SceneContext& /*sceneContext*/)
 		//Adjust the TotalYaw (m_TotalYaw) & TotalPitch (m_TotalPitch) based on the local 'look' variable
 		//Make sure this calculated on a framerate independent way and uses CharacterDesc::rotationSpeed.
 		//Rotate this character based on the TotalPitch (X) and TotalYaw (Y)
+
+
 
 		//********
 		//MOVEMENT
@@ -120,6 +129,11 @@ void Character::Update(const SceneContext& /*sceneContext*/)
 
 		//The above is a simple implementation of Movement Dynamics, adjust the code to further improve the movement logic and behaviour.
 		//Also, it can be usefull to use a seperate RayCast to check if the character is grounded (more responsive)
+		
+		DirectX::XMVECTOR displacementVector{ DirectX::XMLoadFloat3(&m_TotalVelocity) * sceneContext.pGameTime->GetElapsed() };
+		DirectX::XMFLOAT3 displacementFloat3;
+		DirectX::XMStoreFloat3(&displacementFloat3, displacementVector);
+		m_pControllerComponent->Move(displacementFloat3);
 	}
 }
 
