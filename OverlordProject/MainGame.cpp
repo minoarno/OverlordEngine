@@ -6,14 +6,14 @@
 //#define W4
 //#define W5
 //#define W6
-#define W7
+//#define W7
 //#define W8
 //#define W9
 //#define W10
 
 /*MILESTONE Content*/
 //#define MILESTONE_1
-//#define MILESTONE_2
+#define MILESTONE_2
 //#define MILESTONE_3
 
 #pragma region Lab/Milestone Includes

@@ -32,7 +32,7 @@ void Character::Update(const SceneContext& sceneContext)
 		//HANDLE INPUT
 
 		//## Input Gathering (move)
-		XMFLOAT2 move; //Uncomment
+		XMFLOAT2 move = {0,0}; //Uncomment
 		//move.y should contain a 1 (Forward) or -1 (Backward) based on the active input (check corresponding actionId in m_CharacterDesc)
 		//Optional: if move.y is near zero (abs(move.y) < epsilon), you could use the ThumbStickPosition.y for movement
 
@@ -44,7 +44,7 @@ void Character::Update(const SceneContext& sceneContext)
 		{
 			move.y = -1;
 		}
-		else if (abs(move.y) < epsilon)
+		if (abs(move.y) < epsilon)
 		{
 			move.y = sceneContext.pInput->GetThumbstickPosition().y;
 		}
@@ -59,7 +59,7 @@ void Character::Update(const SceneContext& sceneContext)
 		{
 			move.x = -1;
 		}
-		else if (abs(move.y) < epsilon)
+		else if (abs(move.x) < epsilon)
 		{
 			move.x = sceneContext.pInput->GetThumbstickPosition().x;
 		}
@@ -71,7 +71,7 @@ void Character::Update(const SceneContext& sceneContext)
 			// Store the MouseMovement in the local 'look' variable (cast is required)
 		//Optional: in case look.x AND look.y are near zero, you could use the Right ThumbStickPosition for look
 		auto mouseMovement = sceneContext.pInput->GetMouseMovement();
-		look = { mouseMovement.x,mouseMovement.y };
+		look = { (float)mouseMovement.x, (float)mouseMovement.y };
 		if (abs(look.x) < epsilon && abs(look.y) < epsilon)
 		{
 			look = sceneContext.pInput->GetThumbstickPosition(false);
