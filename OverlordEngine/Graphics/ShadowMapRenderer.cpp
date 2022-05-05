@@ -9,15 +9,22 @@ ShadowMapRenderer::~ShadowMapRenderer()
 
 void ShadowMapRenderer::Initialize()
 {
-	TODO_W8(L"Implement Initialize")
+	TODO_W8(L"Implement Initialize");
 	//1. Create a separate RenderTarget (see RenderTarget class), store in m_pShadowRenderTarget
 	//	- RenderTargets are initialized with the RenderTarget::Create function, requiring a RENDERTARGET_DESC
 	//	- Initialize the relevant fields of the RENDERTARGET_DESC (enableColorBuffer:false, enableDepthSRV:true, width & height)
+	RENDERTARGET_DESC renderTargetDesc {};
+	renderTargetDesc.enableColorBuffer = false;
+	renderTargetDesc.enableDepthBuffer = true;
+	renderTargetDesc.width = 100;
+	renderTargetDesc.height = 100;
+	m_pShadowRenderTarget->Create(renderTargetDesc);
 
 	//2. Create a new ShadowMapMaterial, this will be the material that 'generated' the ShadowMap, store in m_pShadowMapGenerator
 	//	- The effect has two techniques, one for static meshes, and another for skinned meshes (both very similar, the skinned version also transforms the vertices based on a given set of boneTransforms)
 	//	- We want to store the TechniqueContext (struct that contains information about the Technique & InputLayout required for rendering) for both techniques in the m_GeneratorTechniqueContexts array.
 	//	- Use the ShadowGeneratorType enum to retrieve the correct TechniqueContext by ID, and also use that ID to store it inside the array (see BaseMaterial::GetTechniqueContext)
+	
 }
 
 void ShadowMapRenderer::UpdateMeshFilter(const SceneContext& /*sceneContext*/, MeshFilter* /*pMeshFilter*/) const
@@ -85,9 +92,9 @@ void ShadowMapRenderer::DrawMesh(const SceneContext& /*sceneContext*/, MeshFilte
 	//		- Perform Draw Call (same as usual, iterate Technique Passes, Apply, Draw - See ModelComponent::Draw for reference)
 }
 
-void ShadowMapRenderer::End(const SceneContext&) const
+void ShadowMapRenderer::End(const SceneContext& /*scenecontext*/) const
 {
-	TODO_W8(L"Implement End")
+	TODO_W8(L"Implement End");
 	//This function is called at the end of the Shadow-pass, all shadow-casting meshes should be drawn to the ShadowMap at this point.
 	//Now we can reset the Main Game Rendertarget back to the original RenderTarget, this also Unbinds the ShadowMapRenderTarget as RTV from the Pipeline, and can safely use it as a ShaderResourceView after this point.
 

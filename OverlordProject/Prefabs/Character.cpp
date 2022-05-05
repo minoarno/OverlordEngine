@@ -153,11 +153,14 @@ void Character::Update(const SceneContext& sceneContext)
 				m_TotalVelocity.y = -m_CharacterDesc.maxFallSpeed;
 			}
 		}
-		else if (true)
+		else if (sceneContext.pInput->IsActionTriggered(m_CharacterDesc.actionId_Jump))
 		{
-
+			m_TotalVelocity.y = m_CharacterDesc.JumpSpeed;
 		}
-
+		else
+		{
+			m_TotalVelocity.y = 0;
+		}
 
 		//************
 		//DISPLACEMENT
