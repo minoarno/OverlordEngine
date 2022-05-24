@@ -53,12 +53,21 @@ private:
 	ControllerComponent* m_pControllerComponent{};
 
 	CharacterDesc m_CharacterDesc;
-	float m_TotalPitch{}, m_TotalYaw{};				//Total camera Pitch(X) and Yaw(Y) rotation
-	float m_MoveAcceleration{},						//Acceleration required to reach maxMoveVelocity after 1 second (maxMoveVelocity / moveAccelerationTime)
-		m_FallAcceleration{},						//Acceleration required to reach maxFallVelocity after 1 second (maxFallVelocity / fallAccelerationTime)
-		m_MoveSpeed{};								//MoveSpeed > Horizontal Velocity = MoveDirection * MoveVelocity (= TotalVelocity.xz)
+	float m_TotalPitch{0}, m_TotalYaw{0};				//Total camera Pitch(X) and Yaw(Y) rotation
+	float m_MoveAcceleration{0},						//Acceleration required to reach maxMoveVelocity after 1 second (maxMoveVelocity / moveAccelerationTime)
+		m_FallAcceleration{0},							//Acceleration required to reach maxFallVelocity after 1 second (maxFallVelocity / fallAccelerationTime)
+		m_MoveSpeed{0};									//MoveSpeed > Horizontal Velocity = MoveDirection * MoveVelocity (= TotalVelocity.xz)
 
-	XMFLOAT3 m_TotalVelocity{};						//TotalVelocity with X/Z for Horizontal Movement AND Y for Vertical Movement (fall/jump)
-	XMFLOAT3 m_CurrentDirection{};					//Current/Last Direction based on Camera forward/right (Stored for deacceleration)
+	XMFLOAT3 m_TotalVelocity{0,0,0};					//TotalVelocity with X/Z for Horizontal Movement AND Y for Vertical Movement (fall/jump)
+	XMFLOAT3 m_CurrentDirection{0,0,0};					//Current/Last Direction based on Camera forward/right (Stored for deacceleration)
+
+	//Visuals
+	ModelAnimator* pAnimator{};
+
+	int m_AnimationClipId{ 0 };
+	float m_AnimationSpeed{ 1.f };
+
+	char** m_ClipNames{};
+	UINT m_ClipCount{};
 };
 

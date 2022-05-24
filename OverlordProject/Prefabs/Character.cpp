@@ -3,6 +3,9 @@
 #include "PhysX/PhysxProxy.h"
 #include "Scenegraph/GameScene.h"
 
+
+#include "Materials/Shadow/DiffuseMaterial_Shadow_Skinned.h"
+
 Character::Character(const CharacterDesc& characterDesc) :
 	m_CharacterDesc{ characterDesc },
 	m_MoveAcceleration(characterDesc.maxMoveSpeed / characterDesc.moveAccelerationTime),
@@ -20,6 +23,54 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	m_pCameraComponent->SetActive(true); //Uncomment to make this camera the active camera
 
 	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * .5f, 0.f);
+
+	//Visuals
+	//**************
+	//const auto pMaterial0 = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>(); //Shadow variant
+	//pMaterial0->SetDiffuseTexture(L"Textures/Head_c.png");
+
+	//const auto pMaterial1 = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>(); //Shadow variant
+	//pMaterial1->SetDiffuseTexture(L"Textures/Ratchet1.jpg");
+	//
+	//const auto pMaterial2 = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>(); //Shadow variant
+	//pMaterial2->SetDiffuseTexture(L"Textures/Ratchet2.jpg");
+	//
+	//const auto pMaterial3 = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>(); //Shadow variant
+	//pMaterial3->SetDiffuseTexture(L"Textures/Ratchet3.jpg");
+	//
+	//const auto pMaterial4 = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>(); //Shadow variant
+	//pMaterial4->SetDiffuseTexture(L"Textures/Ratchet4.jpg");
+	//
+	//const auto pMaterial5 = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>(); //Shadow variant
+	//pMaterial5->SetDiffuseTexture(L"Textures/Ratchet5.jpg");
+
+	//const auto pObject = AddChild(new GameObject);
+	//const auto pModel = pObject->AddComponent(new ModelComponent(L"Meshes/Ratchet.ovm"));
+	//pModel->SetMaterial(pMaterial0, 0);
+	//pModel->SetMaterial(pMaterial1, 1);
+	//pModel->SetMaterial(pMaterial2, 2);
+	//pModel->SetMaterial(pMaterial3, 3);
+	//pModel->SetMaterial(pMaterial4, 4);
+	//pModel->SetMaterial(pMaterial5, 5);
+
+	//float scale = 10.f;
+	//pObject->GetTransform()->Scale(scale, scale, scale);
+	//
+	//pAnimator = pModel->GetAnimator();
+	//pAnimator->SetAnimation(m_AnimationClipId);
+	//pAnimator->SetAnimationSpeed(m_AnimationSpeed);
+	//
+	////Gather Clip Names
+	//m_ClipCount = pAnimator->GetClipCount();
+	//m_ClipNames = new char* [m_ClipCount];
+	//for (UINT i{ 0 }; i < m_ClipCount; ++i)
+	//{
+	//	auto clipName = StringUtil::utf8_encode(pAnimator->GetClip(static_cast<int>(i)).name);
+	//	const auto clipSize = clipName.size();
+	//	m_ClipNames[i] = new char[clipSize + 1];
+	//	strncpy_s(m_ClipNames[i], clipSize + 1, clipName.c_str(), clipSize);
+	//}
+	
 }
 
 void Character::Update(const SceneContext& sceneContext)
@@ -59,19 +110,21 @@ void Character::Update(const SceneContext& sceneContext)
 		{
 			move.x = -1;
 		}
-		else if (abs(move.x) < epsilon)
+		if (abs(move.x) < epsilon)
 		{
 			move.x = sceneContext.pInput->GetThumbstickPosition().x;
 		}
 		
-
 		//## Input Gathering (look)
 		XMFLOAT2 look{ 0.f, 0.f }; //Uncomment
 		//Only if the Left Mouse Button is Down >
-			// Store the MouseMovement in the local 'look' variable (cast is required)
+		// Store the MouseMovement in the local 'look' variable (cast is required)
 		//Optional: in case look.x AND look.y are near zero, you could use the Right ThumbStickPosition for look
 		auto mouseMovement = sceneContext.pInput->GetMouseMovement();
-		look = { (float)mouseMovement.x, (float)mouseMovement.y };
+		if (sceneContext.pInput->IsMouseButton(InputState::down,0))
+		{
+			look = DirectX::XMFLOAT2{ (float)mouseMovement.x, (float)mouseMovement.y };
+		}
 		if (abs(look.x) < epsilon && abs(look.y) < epsilon)
 		{
 			look = sceneContext.pInput->GetThumbstickPosition(false);
@@ -94,8 +147,9 @@ void Character::Update(const SceneContext& sceneContext)
 
 		float elapsedTime  = sceneContext.pGameTime->GetElapsed();
 		m_TotalYaw += look.x * m_CharacterDesc.rotationSpeed * elapsedTime;
-		m_TotalPitch += look.y * m_CharacterDesc.rotationSpeed * elapsedTime;
+		m_TotalPitch -= look.y * m_CharacterDesc.rotationSpeed * elapsedTime;
 
+		GetTransform()->Rotate(m_TotalPitch, m_TotalYaw,0);
 		//********
 		//MOVEMENT
 
@@ -109,12 +163,12 @@ void Character::Update(const SceneContext& sceneContext)
 		//Else (character is not moving, or stopped moving)
 			//Decrease the current MoveSpeed with the current Acceleration (m_MoveSpeed)
 			//Make sure the current MoveSpeed doesn't get smaller than zero
-		if (abs(move.x) < epsilon || abs(move.y) < epsilon)
+		m_MoveAcceleration += m_MoveAcceleration * elapsedTime;
+		if (abs(move.x) > epsilon || abs(move.y) > epsilon)
 		{
-			m_MoveAcceleration += m_MoveAcceleration * elapsedTime;
-			XMStoreFloat3(&m_CurrentDirection, (forward + right) * m_MoveAcceleration);
-			
-			m_MoveSpeed += m_MoveAcceleration;
+			XMStoreFloat3(&m_CurrentDirection, (forward + right));
+
+			m_MoveSpeed += m_MoveAcceleration * elapsedTime;
 			if (m_MoveSpeed > m_CharacterDesc.maxMoveSpeed)
 			{
 				m_MoveSpeed = m_CharacterDesc.maxMoveSpeed;
@@ -122,8 +176,8 @@ void Character::Update(const SceneContext& sceneContext)
 		}
 		else
 		{
-			m_MoveSpeed -= m_MoveSpeed * elapsedTime;
-			if (m_MoveSpeed < 0)
+			m_MoveSpeed -= m_MoveAcceleration * elapsedTime;
+			if (m_MoveSpeed < epsilon)
 			{
 				m_MoveSpeed = 0;
 			}
@@ -133,9 +187,8 @@ void Character::Update(const SceneContext& sceneContext)
 		//Calculate the horizontal velocity (m_CurrentDirection * MoveSpeed)
 		//Set the x/z component of m_TotalVelocity (horizontal_velocity x/z)
 		//It's important that you don't overwrite the y component of m_TotalVelocity (contains the vertical velocity)
-		auto horizontalVelocity = DirectX::XMFLOAT2{ m_CurrentDirection.x * m_MoveSpeed,m_CurrentDirection.z * m_MoveSpeed };
-		m_TotalVelocity.x = horizontalVelocity.x;
-		m_TotalVelocity.z = horizontalVelocity.y;
+		m_TotalVelocity.x = m_CurrentDirection.x * m_MoveSpeed;
+		m_TotalVelocity.z = m_CurrentDirection.z * m_MoveSpeed;
 
 		//## Vertical Movement (Jump/Fall)
 		//If the Controller Component is NOT grounded (= freefall)
@@ -147,7 +200,7 @@ void Character::Update(const SceneContext& sceneContext)
 			//m_TotalVelocity.y is zero
 		if (!m_pControllerComponent->GetCollisionFlags().isSet(PxControllerCollisionFlag::eCOLLISION_DOWN))
 		{
-			m_TotalVelocity.y -= m_FallAcceleration;
+			m_TotalVelocity.y -= m_FallAcceleration * elapsedTime;
 			if (m_TotalVelocity.y < -m_CharacterDesc.maxFallSpeed)
 			{
 				m_TotalVelocity.y = -m_CharacterDesc.maxFallSpeed;
@@ -214,6 +267,37 @@ void Character::DrawImGui()
 		if(ImGui::Checkbox("Character Camera", &isActive))
 		{
 			m_pCameraComponent->SetActive(isActive);
+		}
+	}
+	if (ImGui::CollapsingHeader("Visuals"))
+	{
+		if (ImGui::Button(pAnimator->IsPlaying() ? "PAUSE" : "PLAY"))
+		{
+			if (pAnimator->IsPlaying())pAnimator->Pause();
+			else pAnimator->Play();
+		}
+
+		if (ImGui::Button("RESET"))
+		{
+			pAnimator->Reset();
+		}
+
+		ImGui::Dummy({ 0,5 });
+
+		bool reversed = pAnimator->IsReversed();
+		if (ImGui::Checkbox("Play Reversed", &reversed))
+		{
+			pAnimator->SetPlayReversed(reversed);
+		}
+
+		if (ImGui::ListBox("Animation Clip", &m_AnimationClipId, m_ClipNames, static_cast<int>(m_ClipCount)))
+		{
+			pAnimator->SetAnimation(m_AnimationClipId);
+		}
+
+		if (ImGui::SliderFloat("Animation Speed", &m_AnimationSpeed, 0.f, 4.f))
+		{
+			pAnimator->SetAnimationSpeed(m_AnimationSpeed);
 		}
 	}
 }

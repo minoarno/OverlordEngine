@@ -21,12 +21,9 @@ void PostProcessingScene::Initialize()
 	//Materials
 	//*********
 	const auto pPeasantMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>(); //Shadow variant
-	//const auto pPeasantMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Skinned>();
 	pPeasantMaterial->SetDiffuseTexture(L"Textures/PeasantGirl_Diffuse.png");
 
 	const auto pGroundMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow>(); //Shadow variant
-	//const auto pGroundMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-	//pGroundMaterial->SetDiffuseMaterial(L"Textures/GroundBrick.jpg");
 	pGroundMaterial->SetDiffuseTexture(L"Textures/GroundBrick.jpg");
 
 	//Ground Mesh

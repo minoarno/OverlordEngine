@@ -20,6 +20,7 @@ public:
 
 	void Debug_DrawDepthSRV(const XMFLOAT2& position = { 0.f,0.f }, const XMFLOAT2& scale = { 1.f,1.f }, const XMFLOAT2& pivot = {0.f,0.f}) const;
 
+	void SetSize(float size) { m_Size = size; };
 protected:
 	void Initialize() override;
 
@@ -27,6 +28,8 @@ private:
 	friend class Singleton<ShadowMapRenderer>;
 	ShadowMapRenderer() = default;
 	~ShadowMapRenderer();
+
+	float m_Size = 1000.f;
 
 	//Rendertarget to render the 'shadowmap' to (depth-only)
 	//Contains depth information for all rendered shadow-casting meshes from a light's perspective (usual the main directional light)
