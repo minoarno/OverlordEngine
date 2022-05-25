@@ -36,6 +36,9 @@
     <ClCompile Include="Materials\Post\PostBlur.cpp" />
     <ClCompile Include="Scenes\Gameplay\Level1.cpp" />
     <ClCompile Include="Prefabs\RobotEnemy.cpp" />
+    <ClCompile Include="Scenes\Gameplay\MainMenu.cpp" />
+    <ClCompile Include="Prefabs\UI\Button.cpp" />
+    <ClCompile Include="Prefabs\UI\Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -72,5 +75,8 @@
     <ClInclude Include="Materials\Post\PostBlur.h" />
     <ClInclude Include="Scenes\Gameplay\Level1.h" />
     <ClInclude Include="Prefabs\RobotEnemy.h" />
+    <ClInclude Include="Scenes\Gameplay\MainMenu.h" />
+    <ClInclude Include="Prefabs\UI\Button.h" />
+    <ClInclude Include="Prefabs\UI\Text.h" />
   </ItemGroup>
 </Project>

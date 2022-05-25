@@ -93,6 +93,8 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Prefabs\UI\Button.cpp" />
+    <ClCompile Include="Scenes\Gameplay\MainMenu.cpp" />
     <ClCompile Include="Prefabs\RobotEnemy.cpp" />
     <ClCompile Include="Scenes\Gameplay\Level1.cpp" />
     <ClCompile Include="Materials\DiffuseMaterial.cpp" />
@@ -140,6 +142,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Scenes\Week 4\UberMaterialScene.cpp" />
+    <ClCompile Include="Prefabs\UI\Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OverlordEngine\OverlordEngine.vcxproj">
@@ -147,6 +150,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Prefabs\UI\Button.h" />
+    <ClInclude Include="Scenes\Gameplay\MainMenu.h" />
     <ClInclude Include="Prefabs\RobotEnemy.h" />
     <ClInclude Include="Scenes\Gameplay\Level1.h" />
     <ClInclude Include="Materials\DiffuseMaterial.h" />
@@ -181,6 +186,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Scenes\Week 4\UberMaterialScene.h" />
+    <ClInclude Include="Prefabs\UI\Text.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

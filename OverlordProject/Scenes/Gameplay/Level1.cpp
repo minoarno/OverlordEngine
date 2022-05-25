@@ -34,16 +34,15 @@ void Level1::Initialize()
 
 	AddChild(pGroundObj);
 
-	const auto pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
-	CharacterDesc characterDesc{ pDefaultMaterial };
-	characterDesc.actionId_MoveForward = CharacterMoveForward;
-	characterDesc.actionId_MoveBackward = CharacterMoveBackward;
-	characterDesc.actionId_MoveLeft = CharacterMoveLeft;
-	characterDesc.actionId_MoveRight = CharacterMoveRight;
-	characterDesc.actionId_Jump = CharacterJump;
-	const auto pPlayer = new Character(characterDesc);
-	AddChild(pPlayer);
-
+	//const auto pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
+	//CharacterDesc characterDesc{ pDefaultMaterial };
+	//characterDesc.actionId_MoveForward = CharacterMoveForward;
+	//characterDesc.actionId_MoveBackward = CharacterMoveBackward;
+	//characterDesc.actionId_MoveLeft = CharacterMoveLeft;
+	//characterDesc.actionId_MoveRight = CharacterMoveRight;
+	//characterDesc.actionId_Jump = CharacterJump;
+	//const auto pPlayer = new Character(characterDesc);
+	//AddChild(pPlayer);
 
 }
 
