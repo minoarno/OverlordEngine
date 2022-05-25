@@ -5,7 +5,6 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 {
 	const auto pReader = new BinaryReader();
 	pReader->Open(loadInfo.assetFullPath);
-	Logger::LogInfo(L"{} {}", loadInfo.assetFullPath.c_str(), loadInfo.assetSubPath.c_str());
 	if (!pReader->Exists())
 	{
 		Logger::LogError(L"Failed to read the assetFile!\nPath: \'{}\'", loadInfo.assetSubPath);
@@ -19,16 +18,19 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 	//If Identification bytes doesn't match B|M|F,
 	//Log Error (SpriteFontLoader::LoadContent > Not a valid .fnt font) &
 	//return nullptr
+	pReader->SetBufferPosition(0);
 	if (pReader->Read<char>() != 'B')
 	{
 		Logger::LogError(L"SpriteFontLoader::LoadContent > Not a valid .fnt font");
 		return nullptr;
 	}
+	pReader->SetBufferPosition(1);
 	if (pReader->Read<char>() != 'M')
 	{
 		Logger::LogError(L"SpriteFontLoader::LoadContent > Not a valid .fnt font");
 		return nullptr;
 	}
+	pReader->SetBufferPosition(2);
 	if (pReader->Read<char>() != 'F')
 	{
 		Logger::LogError(L"SpriteFontLoader::LoadContent > Not a valid .fnt font");
@@ -40,6 +42,7 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 	//If version is < 3,
 	//Log Error (SpriteFontLoader::LoadContent > Only .fnt version 3 is supported)
 	//return nullptr
+	pReader->SetBufferPosition(3);
 	if (pReader->Read<char>() != 3)
 	{
 		Logger::LogError(L"SpriteFontLoader::LoadContent > Only .fnt version 3 is supported");
@@ -57,10 +60,10 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 	//Retrieve the FontSize [fontDesc.fontSize]
 	//Move the binreader to the start of the FontName [BinaryReader::MoveBufferPosition(...) or you can set its position using BinaryReader::SetBufferPosition(...))
 	//Retrieve the FontName [fontDesc.fontName]
-	//...
-	char blockId = pReader->Read<char>();
-	int blockSize = pReader->Read<int>();
-	fontDesc.fontSize = pReader->Read<short int>();
+	pReader->SetBufferPosition(4);
+	uint8_t blockId = pReader->Read<uint8_t>();
+	uint32_t blockSize = pReader->Read<uint32_t>();
+	fontDesc.fontSize = pReader->Read<int16_t>();
 	pReader->MoveBufferPosition(12);
 	fontDesc.fontName = pReader->ReadNullString();
 
@@ -74,12 +77,12 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 	//	> Log Error (Only one texture per font is allowed!)
 	//Advance to Block2 (Move Reader)
 	//...
-	blockId = pReader->Read<char>();
-	blockSize = pReader->Read<int>();
+	blockId = pReader->Read<uint8_t>();
+	blockSize = pReader->Read<uint32_t>();
 	pReader->MoveBufferPosition(4);
-	fontDesc.textureWidth = pReader->Read<short int>();
-	fontDesc.textureHeight = pReader->Read<short int>();
-	short int pages{ pReader->Read<short int>() };
+	fontDesc.textureWidth = pReader->Read<uint16_t>();
+	fontDesc.textureHeight = pReader->Read<uint16_t>();
+	uint16_t pages{ pReader->Read<uint16_t>() };
 	if (pages > 1)
 	{
 		Logger::LogError(L"SpriteFontLoader::LoadContent > SpriteFont (.fnt): Only one texture per font allowed");
@@ -96,17 +99,24 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 	//	>> page texture should be stored next to the .fnt file, pageName contains the name of the texture file
 	//	>> full texture path = asset parent_path of .fnt file (see loadInfo.assetFullPath > get parent_path) + pageName (filesystem::path::append)
 	//	>> Load the texture (ContentManager::Load<TextureData>) & Store [fontDesc.pTexture]
-	blockId = pReader->Read<char>();
-	blockSize = pReader->Read<int>();
+	blockId = pReader->Read<uint8_t>();
+
+	blockSize = pReader->Read<uint32_t>();
+
 	std::wstring pageName =  pReader->ReadNullString();
 	if (pageName.length() == 0)
 	{
 		Logger::LogError(L"SpriteFontLoader::LoadContent > SpriteFont (.fnt): Invalid Font Sprite [Empty]");
 		return nullptr;
 	}
-	std::wstring folderPath = loadInfo.assetSubPath.substr(0, loadInfo.assetSubPath.find(L"/") + 1);
-	fontDesc.pTexture = ContentManager::Load<TextureData>(folderPath + pageName);
+	std::wstring fullPath = loadInfo.assetFullPath.parent_path().append(pageName);
+	fontDesc.pTexture = ContentManager::Load<TextureData>(fullPath);
 
+	if (fontDesc.pTexture == nullptr)
+	{
+		Logger::LogError(L"SpriteFontLoader::LoadContant > Texture not found");
+		return nullptr;
+	}
 
 	//**********
 	// BLOCK 3 *
@@ -133,31 +143,29 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 	//	> key = (wchar_t) charId
 	//	> value = new FontMetric
 	//(loop restarts till all metrics are parsed)
-	blockId = pReader->Read<char>();
-	blockSize = pReader->Read<int>();
+	blockId = pReader->Read<uint8_t>();
+	if (blockId != 4)
+	{
+		Logger::LogError(L"SpriteFontLoader::LoadContant > Something went wrong before block 4");
+	}
+	blockSize = pReader->Read<uint32_t>();
 
 	int count = blockSize / 20;
-	for (int i{ 0 }; i < count; ++i)
+	for (int i{ 0 }; i < count; i++)
 	{
-		wchar_t characterId{ wchar_t(pReader->Read<int>()) };
-		if (!(characterId))
-		{
-			pReader->MoveBufferPosition(16);
-			Logger::LogWarning(L"SpriteFontLoader::LoadContent > Character not valid");
-			continue;
-		}
+		wchar_t characterId = static_cast<wchar_t>(pReader->Read<uint32_t>());
 		
-		FontMetric metric{ fontDesc.metrics[characterId]};
+		FontMetric metric{};
 		metric.character = characterId;
-		short int xPos{ pReader->Read<short int>() };
-		short int yPos{ pReader->Read<short int>() };
-		metric.width = pReader->Read<unsigned short int>();
-		metric.height = pReader->Read<unsigned short int>();
-		metric.offsetX = pReader->Read<short int>();
-		metric.offsetY = pReader->Read<short int>();
-		metric.advanceX = pReader->Read<short int>();
+		uint16_t xPos{ pReader->Read<uint16_t>() };
+		uint16_t yPos{ pReader->Read<uint16_t>() };
+		metric.width = pReader->Read<uint16_t>();
+		metric.height = pReader->Read<uint16_t>();
+		metric.offsetX = pReader->Read<uint16_t>();
+		metric.offsetY = pReader->Read<uint16_t>();
+		metric.advanceX = pReader->Read<uint16_t>();
 		metric.page = pReader->Read<unsigned char>();
-		unsigned char channel{ pReader->Read<unsigned char>() };
+		unsigned char channel{ pReader->Read<uint8_t>() };
 		if (channel == 1) metric.channel = 2;
 		else if (channel == 2) metric.channel = 1;
 		else if (channel == 4) metric.channel = 0;
