@@ -13,6 +13,7 @@ public:
 	SpriteComponent& operator=(SpriteComponent&& other) noexcept = delete;
 
 	const XMFLOAT2& GetPivot() const { return m_Pivot; }
+	const XMFLOAT2& GetDimensions() const;
 	const XMFLOAT4& GetColor() const { return m_Color; }
 
 	void SetPivot(const XMFLOAT2& pivot) { m_Pivot = pivot; }

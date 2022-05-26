@@ -19,13 +19,13 @@ void MainMenu::Initialize()
 	auto m_pCameraComponent = pCamera->GetComponent<CameraComponent>();
 	m_pCameraComponent->SetActive(true);
 
-	auto startButton = new Button(L"Textures/UI/StartButton.png", [&]() { SceneManager::Get()->SetActiveGameScene(L"Level 1"); });
-	startButton->GetTransform()->Translate(m_SceneContext.windowWidth * .25f, 200, .5f);
-	AddChild(startButton);
+	m_pButtons.push_back(new Button(L"Textures/UI/StartButton.png", [&]() { SceneManager::Get()->SetActiveGameScene(L"Level 1"); }));
+	m_pButtons[0]->GetTransform()->Translate(m_SceneContext.windowWidth * .25f, 200, .5f);
+	AddChild(m_pButtons[0]);
 
-	auto exitButton = new Button(L"Textures/UI/ExitButton.png", [&]() { return WM_QUIT; });
-	exitButton->GetTransform()->Translate(m_SceneContext.windowWidth * .25f, 400, .5f);
-	AddChild(exitButton);
+	m_pButtons.push_back(new Button(L"Textures/UI/ExitButton.png", [&]() { return WM_QUIT; }));
+	m_pButtons[1]->GetTransform()->Translate(m_SceneContext.windowWidth * .25f, 400, .5f);
+	AddChild(m_pButtons[1]);
 
 	//Background
 	auto background = new GameObject();
@@ -40,7 +40,10 @@ void MainMenu::Update()
 {
 	if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
 	{
-
+		for (Button* button : m_pButtons)
+		{
+			button->Press(m_SceneContext);
+		}
 	}
 }
 

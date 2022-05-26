@@ -16,10 +16,11 @@ public:
 	void Update(const SceneContext&) override;
 
 	void Select();
-	void Press();
+	void Press(const SceneContext& sceneContext);
 	bool IsSelected()const { return m_IsSelected; }
 private:
 	bool m_IsSelected{ false };
+	SpriteComponent* m_pSpriteComponent{};
 	std::function<void()> m_Func;
 };
 

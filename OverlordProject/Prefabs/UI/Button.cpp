@@ -6,8 +6,7 @@ Button::Button(const std::wstring& imgPath, const std::function<void()>& func)
 	: GameObject{ }
 	, m_Func{ func }
 {
-	AddComponent(new SpriteComponent(imgPath));
-
+	m_pSpriteComponent = AddComponent(new SpriteComponent(imgPath));
 }
 
 
@@ -27,7 +26,13 @@ void Button::Select()
 	m_IsSelected = !m_IsSelected;
 }
 
-void Button::Press()
+void Button::Press(const SceneContext& sceneContext)
 {
-	m_Func();
+	auto mousePos = sceneContext.pInput->GetMousePosition();
+	auto pos = GetTransform()->GetPosition();
+	auto dims = m_pSpriteComponent->GetDimensions();
+	if (pos.x < mousePos.x && pos.x + dims.x > mousePos.x && pos.y < mousePos.y && pos.y + dims.y > mousePos.y)
+	{
+		m_Func();
+	}
 }

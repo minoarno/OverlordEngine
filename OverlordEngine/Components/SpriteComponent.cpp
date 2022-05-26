@@ -15,6 +15,11 @@ void SpriteComponent::Initialize(const SceneContext& /*sceneContext*/)
 	m_pTexture = ContentManager::Load<TextureData>(m_SpriteAsset);
 }
 
+const XMFLOAT2& SpriteComponent::GetDimensions() const
+{
+	return m_pTexture->GetDimension();
+}
+
 void SpriteComponent::SetTexture(const std::wstring& spriteAsset)
 {
 	m_SpriteAsset = spriteAsset;
