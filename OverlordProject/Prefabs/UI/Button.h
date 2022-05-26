@@ -4,7 +4,7 @@ class Text;
 class Button : public GameObject
 {
 public:
-	Button(const std::string& text, const std::function<void()>& func);
+	Button(const std::wstring& imgPath, const std::function<void()>& func);
 	~Button() override = default;
 
 	Button(const Button& other) = delete;
@@ -19,7 +19,6 @@ public:
 	void Press();
 	bool IsSelected()const { return m_IsSelected; }
 private:
-	Text* m_pText;
 	bool m_IsSelected{ false };
 	std::function<void()> m_Func;
 };

@@ -19,9 +19,13 @@ void MainMenu::Initialize()
 	auto m_pCameraComponent = pCamera->GetComponent<CameraComponent>();
 	m_pCameraComponent->SetActive(true);
 
-	auto startButton = new Button("Start", [&]() { SceneManager::Get()->NextScene(); });
-	startButton->GetTransform()->Translate(200, 50, .5f);
+	auto startButton = new Button(L"Textures/UI/StartButton.png", [&]() { SceneManager::Get()->SetActiveGameScene(L"Level 1"); });
+	startButton->GetTransform()->Translate(m_SceneContext.windowWidth * .25f, 200, .5f);
 	AddChild(startButton);
+
+	auto exitButton = new Button(L"Textures/UI/ExitButton.png", [&]() { return WM_QUIT; });
+	exitButton->GetTransform()->Translate(m_SceneContext.windowWidth * .25f, 400, .5f);
+	AddChild(exitButton);
 
 	//Background
 	auto background = new GameObject();
@@ -30,18 +34,13 @@ void MainMenu::Initialize()
 	background->GetTransform()->Scale(1.f, 1.f, 1.f);
 
 	AddChild(background);
-
-
 }
 
 void MainMenu::Update()
 {
-	if (InputManager::IsMouseButton(InputState::pressed, VK_RBUTTON))
+	if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
 	{
-		if (const auto pPickedObject = m_SceneContext.pCamera->Pick())
-		{
-			RemoveChild(pPickedObject, true);
-		}
+
 	}
 }
 
