@@ -40,6 +40,7 @@
     <ClCompile Include="Prefabs\UI\Button.cpp" />
     <ClCompile Include="Prefabs\UI\Text.cpp" />
     <ClCompile Include="Prefabs\UI\HUD.cpp" />
+    <ClCompile Include="Materials\Shadow\ColorMaterial_Shadow_Skinned.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -80,5 +81,6 @@
     <ClInclude Include="Prefabs\UI\Button.h" />
     <ClInclude Include="Prefabs\UI\Text.h" />
     <ClInclude Include="Prefabs\UI\HUD.h" />
+    <ClInclude Include="Materials\Shadow\ColorMaterial_Shadow_Skinned.h" />
   </ItemGroup>
 </Project>

@@ -39,12 +39,13 @@ void SpriteComponent::Draw(const SceneContext& sceneContext)
 		// You can use the MathHelper::QuaternionToEuler function to help you with the z rotation
 
 	TransformComponent* transform{ m_pGameObject->GetTransform() };
+
 	SpriteRenderer::Get()->AppendSprite(m_pTexture,
-		DirectX::XMFLOAT2{ transform->GetPosition().x, transform->GetPosition().y },
+		DirectX::XMFLOAT2{ transform->GetWorldPosition().x, transform->GetWorldPosition().y },
 		m_Color,
 		m_Pivot,
 		DirectX::XMFLOAT2{ transform->GetScale().x, transform->GetScale().y },
-		MathHelper::QuaternionToEuler(transform->GetRotation()).z,
+		MathHelper::QuaternionToEuler(transform->GetWorldRotation()).z,
 		transform->GetPosition().z
 	);
 

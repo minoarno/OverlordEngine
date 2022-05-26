@@ -1,4 +1,5 @@
 #pragma once
+class ColorMaterial_Shadow_Skinned;
 class RobotEnemy : public GameObject
 {
 public:
@@ -12,5 +13,8 @@ public:
 
 protected:
 	void Initialize(const SceneContext& sceneContext) override;
+
+private:
+	ColorMaterial_Shadow_Skinned* m_pEyeMat;
 };
 

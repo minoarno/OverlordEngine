@@ -12,6 +12,15 @@ Character::Character(const CharacterDesc& characterDesc) :
 	m_FallAcceleration(characterDesc.maxFallSpeed / characterDesc.fallAccelerationTime)
 {}
 
+Character::~Character()
+{
+	for (size_t i = 0; i < m_ClipCount; i++)
+	{
+		SafeDelete(m_ClipNames[i]);
+	}
+	SafeDelete(m_ClipNames);
+}
+
 void Character::Initialize(const SceneContext& /*sceneContext*/)
 {
 	//Controller
@@ -24,6 +33,46 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 
 	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * 1.5f, -15.f);
 
+	//Visuals
+//**************
+	const auto pMaterial0 = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>(); //Shadow variant
+	pMaterial0->SetDiffuseTexture(L"Textures/Head_c.png");
+
+	const auto pMaterial1 = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>(); //Shadow variant
+	pMaterial1->SetDiffuseTexture(L"Textures/Eye_c.png");
+
+	const auto pMaterial2 = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>(); //Shadow variant
+	pMaterial2->SetDiffuseTexture(L"Textures/Tex2_c.png");
+
+	const auto pMaterial3 = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>(); //Shadow variant
+	pMaterial3->SetDiffuseTexture(L"Textures/Tex1_c.png");
+
+	m_pVisuals = AddChild(new GameObject());
+	const auto pModel = m_pVisuals->AddComponent(new ModelComponent(L"Meshes/Ratchet.ovm"));
+	pModel->SetMaterial(pMaterial0, 0);
+	pModel->SetMaterial(pMaterial1, 1);
+	pModel->SetMaterial(pMaterial2, 2);
+	pModel->SetMaterial(pMaterial3, 3);
+	pModel->GetTransform()->Rotate(0, 180, 0);
+
+	float scale = 0.01f;
+	m_pVisuals->GetTransform()->Scale(scale, scale, scale);
+	m_pVisuals->GetTransform()->Translate(0, -m_CharacterDesc.controller.height * .8f, 0);
+
+	pAnimator = pModel->GetAnimator();
+	pAnimator->SetAnimation(m_AnimationClipId);
+	pAnimator->SetAnimationSpeed(m_AnimationSpeed);
+
+	//Gather Clip Names
+	m_ClipCount = pAnimator->GetClipCount();
+	m_ClipNames = new char* [m_ClipCount];
+	for (UINT i{ 0 }; i < m_ClipCount; ++i)
+	{
+		auto clipName = StringUtil::utf8_encode(pAnimator->GetClip(static_cast<int>(i)).name);
+		const auto clipSize = clipName.size();
+		m_ClipNames[i] = new char[clipSize + 1];
+		strncpy_s(m_ClipNames[i], clipSize + 1, clipName.c_str(), clipSize);
+	}
 
 }
 
@@ -104,6 +153,9 @@ void Character::Update(const SceneContext& sceneContext)
 		m_TotalPitch -= look.y * m_CharacterDesc.rotationSpeed * elapsedTime;
 
 		GetTransform()->Rotate(m_TotalPitch, m_TotalYaw,0);
+		m_pVisuals->GetTransform()->Rotate(-m_TotalPitch + 180, 0,180);
+		//m_pVisuals->GetTransform()->Rotate(0,180,0);
+
 		//********
 		//MOVEMENT
 
@@ -221,6 +273,37 @@ void Character::DrawImGui()
 		if(ImGui::Checkbox("Character Camera", &isActive))
 		{
 			m_pCameraComponent->SetActive(isActive);
+		}
+	}
+	if (ImGui::CollapsingHeader("Visuals"))
+	{
+		if (ImGui::Button(pAnimator->IsPlaying() ? "PAUSE" : "PLAY"))
+		{
+			if (pAnimator->IsPlaying())pAnimator->Pause();
+			else pAnimator->Play();
+		}
+
+		if (ImGui::Button("RESET"))
+		{
+			pAnimator->Reset();
+		}
+
+		ImGui::Dummy({ 0,5 });
+
+		bool reversed = pAnimator->IsReversed();
+		if (ImGui::Checkbox("Play Reversed", &reversed))
+		{
+			pAnimator->SetPlayReversed(reversed);
+		}
+
+		if (ImGui::ListBox("Animation Clip", &m_AnimationClipId, m_ClipNames, static_cast<int>(m_ClipCount)))
+		{
+			pAnimator->SetAnimation(m_AnimationClipId);
+		}
+
+		if (ImGui::SliderFloat("Animation Speed", &m_AnimationSpeed, 0.f, 4.f))
+		{
+			pAnimator->SetAnimationSpeed(m_AnimationSpeed);
 		}
 	}
 }

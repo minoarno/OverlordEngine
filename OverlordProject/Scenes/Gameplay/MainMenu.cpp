@@ -20,11 +20,11 @@ void MainMenu::Initialize()
 	m_pCameraComponent->SetActive(true);
 
 	m_pButtons.push_back(new Button(L"Textures/UI/StartButton.png", [&]() { SceneManager::Get()->SetActiveGameScene(L"Level 1"); }));
-	m_pButtons[0]->GetTransform()->Translate(m_SceneContext.windowWidth * .25f, 200, .5f);
+	m_pButtons[0]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 200, .5f);
 	AddChild(m_pButtons[0]);
 
 	m_pButtons.push_back(new Button(L"Textures/UI/ExitButton.png", [&]() { OverlordGame::Stop(); }));
-	m_pButtons[1]->GetTransform()->Translate(m_SceneContext.windowWidth * .25f, 400, .5f);
+	m_pButtons[1]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 400, .5f);
 	AddChild(m_pButtons[1]);
 
 	//Background

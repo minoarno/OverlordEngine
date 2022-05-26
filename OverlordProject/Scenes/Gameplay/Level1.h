@@ -30,13 +30,5 @@ protected:
 private:
 	Character* m_pCharacter{};
 
-	//Visuals
-	ModelAnimator* pAnimator{};
-
-	int m_AnimationClipId{ 0 };
-	float m_AnimationSpeed{ 1.f };
-
-	char** m_ClipNames{};
-	UINT m_ClipCount{};
 };
 

@@ -35,7 +35,7 @@ class Character : public GameObject
 {
 public:
 	Character(const CharacterDesc& characterDesc);
-	~Character() override = default;
+	~Character() override;
 
 	Character(const Character& other) = delete;
 	Character(Character&& other) noexcept = delete;
@@ -62,6 +62,7 @@ private:
 	XMFLOAT3 m_CurrentDirection{0,0,0};					//Current/Last Direction based on Camera forward/right (Stored for deacceleration)
 
 	//Visuals
+	GameObject* m_pVisuals;
 	ModelAnimator* pAnimator{};
 
 	int m_AnimationClipId{ 0 };

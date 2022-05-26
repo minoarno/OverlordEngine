@@ -93,6 +93,7 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Materials\Shadow\ColorMaterial_Shadow_Skinned.cpp" />
     <ClCompile Include="Prefabs\UI\HUD.cpp" />
     <ClCompile Include="Prefabs\UI\Button.cpp" />
     <ClCompile Include="Scenes\Gameplay\MainMenu.cpp" />
@@ -151,6 +152,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Materials\Shadow\ColorMaterial_Shadow_Skinned.h" />
     <ClInclude Include="Prefabs\UI\HUD.h" />
     <ClInclude Include="Prefabs\UI\Button.h" />
     <ClInclude Include="Scenes\Gameplay\MainMenu.h" />
