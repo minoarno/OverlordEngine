@@ -93,6 +93,7 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Prefabs\UI\HUD.cpp" />
     <ClCompile Include="Prefabs\UI\Button.cpp" />
     <ClCompile Include="Scenes\Gameplay\MainMenu.cpp" />
     <ClCompile Include="Prefabs\RobotEnemy.cpp" />
@@ -150,6 +151,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Prefabs\UI\HUD.h" />
     <ClInclude Include="Prefabs\UI\Button.h" />
     <ClInclude Include="Scenes\Gameplay\MainMenu.h" />
     <ClInclude Include="Prefabs\RobotEnemy.h" />

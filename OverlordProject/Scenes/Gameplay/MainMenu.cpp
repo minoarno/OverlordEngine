@@ -23,7 +23,7 @@ void MainMenu::Initialize()
 	m_pButtons[0]->GetTransform()->Translate(m_SceneContext.windowWidth * .25f, 200, .5f);
 	AddChild(m_pButtons[0]);
 
-	m_pButtons.push_back(new Button(L"Textures/UI/ExitButton.png", [&]() { return WM_QUIT; }));
+	m_pButtons.push_back(new Button(L"Textures/UI/ExitButton.png", [&]() { OverlordGame::Stop(); }));
 	m_pButtons[1]->GetTransform()->Translate(m_SceneContext.windowWidth * .25f, 400, .5f);
 	AddChild(m_pButtons[1]);
 

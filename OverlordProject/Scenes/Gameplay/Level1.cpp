@@ -9,10 +9,21 @@
 #include "Prefabs/RobotEnemy.h"
 #include "Prefabs/Character.h"
 
+#include "Prefabs/UI/HUD.h"
+
 Level1::Level1()
 	: GameScene{L"Level 1"}
 {
 
+}
+
+Level1::~Level1()
+{
+	for (size_t i = 0; i < m_ClipCount; i++)
+	{
+		SafeDelete(m_ClipNames[i]);
+	}
+	SafeDelete(m_ClipNames);
 }
 
 void Level1::Initialize()
@@ -119,6 +130,8 @@ void Level1::Initialize()
 	inputAction = InputAction(CharacterJump, InputState::pressed, VK_SPACE, -1, XINPUT_GAMEPAD_A);
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
+	//HUD
+	AddChild(new HUD{});
 }
 
 void Level1::Update()

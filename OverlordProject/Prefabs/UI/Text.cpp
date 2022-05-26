@@ -3,7 +3,8 @@
 
 
 Text::Text(const std::string& text, const XMFLOAT4& color)
-	: m_Text{ text }
+	: GameObject{}
+	, m_Text{ text }
 	, m_TextColor{ color }
 {
 }

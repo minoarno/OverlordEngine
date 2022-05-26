@@ -4,7 +4,7 @@ class Level1 : public GameScene
 {
 public:
 	Level1();
-	~Level1() override = default;
+	~Level1() override;
 
 	Level1(const Level1& other) = delete;
 	Level1(Level1&& other) noexcept = delete;

@@ -9,14 +9,14 @@ RobotEnemy::RobotEnemy()
 
 void RobotEnemy::Initialize(const SceneContext&)
 {
-	const auto pPeasantMaterial0 = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>(); //Shadow variant
-	pPeasantMaterial0->SetDiffuseTexture(L"Textures/PeasantGirl_Diffuse.png");
+	const auto pMat = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>(); //Shadow variant
+	pMat->SetDiffuseTexture(L"Textures/PeasantGirl_Diffuse.png");
 
 	//Character Mesh
 	//**************
 	const auto pObject = AddChild(new GameObject);
-	const auto pModel = pObject->AddComponent(new ModelComponent(L"Meshes/Ratchet.ovm"));
-	pModel->SetMaterial(pPeasantMaterial0,0);
+	const auto pModel = pObject->AddComponent(new ModelComponent(L"Meshes/EnemyRobot.ovm"));
+	pModel->SetMaterial(pMat,0);
 
 	pObject->GetTransform()->Scale(0.1f, 0.1f, 0.1f);
 
