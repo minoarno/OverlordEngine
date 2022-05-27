@@ -25,7 +25,9 @@ protected:
 		CharacterMoveBackward,
 		CharacterJump,
 		CharacterShoot,
-		CharacterSlash
+		CharacterSlash,
+		CharacterGrenade,
+		Settings
 	};
 private:
 	Character* m_pCharacter{};

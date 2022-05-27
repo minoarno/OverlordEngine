@@ -1,4 +1,5 @@
 #pragma once
+
 struct CharacterDesc
 {
 	CharacterDesc(
@@ -34,6 +35,17 @@ struct CharacterDesc
 class Character : public GameObject
 {
 public:
+	enum CharacterAnimation : uint8_t
+	{
+		Idle = 0,
+		Dying = 1,
+		Shooting = 2,
+		Slashing = 3,
+		Throwing = 4,
+		Running = 5,
+		Jumping = 6
+	};
+
 	Character(const CharacterDesc& characterDesc);
 	~Character() override;
 
@@ -47,7 +59,6 @@ public:
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;
-
 private:
 	CameraComponent* m_pCameraComponent{};
 	ControllerComponent* m_pControllerComponent{};
@@ -70,5 +81,7 @@ private:
 
 	char** m_ClipNames{};
 	UINT m_ClipCount{};
+
+	CharacterAnimation m_pCharacterState{ CharacterAnimation::Idle };
 };
 

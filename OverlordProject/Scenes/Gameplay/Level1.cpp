@@ -85,6 +85,9 @@ void Level1::Initialize()
 	inputAction = InputAction(CharacterJump, InputState::pressed, VK_SPACE, -1, XINPUT_GAMEPAD_A);
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
+	inputAction = InputAction(Settings, InputState::pressed, VK_ESCAPE, -1, XINPUT_GAMEPAD_START);
+	m_SceneContext.pInput->AddInputAction(inputAction);
+
 	//HUD
 	AddChild(new HUD{});
 
@@ -103,5 +106,5 @@ void Level1::Draw()
 
 void Level1::OnGUI()
 {
-	
+	m_pCharacter->DrawImGui();
 }

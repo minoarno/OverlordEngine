@@ -154,7 +154,6 @@ void Character::Update(const SceneContext& sceneContext)
 
 		GetTransform()->Rotate(m_TotalPitch, m_TotalYaw,0);
 		m_pVisuals->GetTransform()->Rotate(-m_TotalPitch + 180, 0,180);
-		//m_pVisuals->GetTransform()->Rotate(0,180,0);
 
 		//********
 		//MOVEMENT
