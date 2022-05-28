@@ -23,15 +23,16 @@ void RobotEnemy::Initialize(const SceneContext&)
 
 	//Character Mesh
 	//**************
-	const auto pObject = AddChild(new GameObject);
-	const auto pModel = pObject->AddComponent(new ModelComponent(L"Meshes/EnemyRobot.ovm"));
+	m_pVisuals = AddChild(new GameObject);
+	const auto pModel = m_pVisuals->AddComponent(new ModelComponent(L"Meshes/EnemyRobot.ovm"));
 	pModel->SetMaterial(pMat0,0);
 	pModel->SetMaterial(pMat1,1);
 	pModel->SetMaterial(m_pEyeMat,2);
 	pModel->SetMaterial(pMat3,3);
 
 	float scale{ 0.01f };
-	pObject->GetTransform()->Scale(scale, scale, scale);
+	m_pVisuals->GetTransform()->Scale(scale, scale, scale);
+	m_pVisuals->GetTransform()->Translate(0, -3.f, 0);
 
 	if (const auto pAnimator = pModel->GetAnimator())
 	{
@@ -40,4 +41,8 @@ void RobotEnemy::Initialize(const SceneContext&)
 	}
 
 	m_pEyeMat->SetColor(DirectX::XMFLOAT4{ DirectX::Colors::Red });
+
+	const auto pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
+	auto rb = AddComponent(new RigidBodyComponent());
+	rb->AddCollider(PxBoxGeometry{ 2.f,3.f,2.f }, *pDefaultMaterial);
 }

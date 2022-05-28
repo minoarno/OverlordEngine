@@ -27,6 +27,11 @@ void HUD::Draw(const SceneContext& sceneContext)
 	m_pBoltsText->Draw(sceneContext);
 }
 
+void HUD::SetAmountBolts(int amount)
+{
+	m_AmountOfBoltsCollected = amount;
+}
+
 void HUD::IncreaseBolts(int amount)
 {
 	m_AmountOfBoltsCollected += amount;

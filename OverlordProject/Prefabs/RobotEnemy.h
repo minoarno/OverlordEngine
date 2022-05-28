@@ -15,6 +15,7 @@ protected:
 	void Initialize(const SceneContext& sceneContext) override;
 
 private:
-	ColorMaterial_Shadow_Skinned* m_pEyeMat;
+	ColorMaterial_Shadow_Skinned* m_pEyeMat{nullptr};
+	GameObject* m_pVisuals{nullptr};
 };
 

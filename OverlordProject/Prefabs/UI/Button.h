@@ -18,6 +18,7 @@ public:
 	void Select();
 	void Press(const SceneContext& sceneContext);
 	bool IsSelected()const { return m_IsSelected; }
+
 private:
 	bool m_IsSelected{ false };
 	SpriteComponent* m_pSpriteComponent{};

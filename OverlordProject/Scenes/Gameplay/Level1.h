@@ -1,4 +1,5 @@
 #pragma once
+class Button;
 class Character;
 class Level1 : public GameScene
 {
@@ -17,6 +18,10 @@ protected:
 	void Draw() override;
 	void OnGUI() override;
 
+
+	void OnSceneActivated() override;
+	void Reset();
+
 	enum InputIds
 	{
 		CharacterMoveLeft,
@@ -30,7 +35,8 @@ protected:
 		Settings
 	};
 private:
-	Character* m_pCharacter{};
-
+	Character* m_pCharacter{nullptr};
+	std::vector<Button*> m_pButtons;
+	HUD* m_pHUD{nullptr};
 };
 

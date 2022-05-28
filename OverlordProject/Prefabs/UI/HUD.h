@@ -14,6 +14,7 @@ public:
 	void Initialize(const SceneContext&) override;
 	void Draw(const SceneContext&) override;
 
+	void SetAmountBolts(int amount);
 	void IncreaseBolts(int amount);
 private:
 	int m_AmountOfBoltsCollected{ 0 };

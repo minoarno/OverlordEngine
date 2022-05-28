@@ -4,8 +4,8 @@ struct CharacterDesc
 {
 	CharacterDesc(
 		PxMaterial* pMaterial,
-		float radius = .5f,
-		float height = 2.f)
+		float radius = 1.5f,
+		float height = 2.4f)
 	{
 		controller.setToDefault();
 		controller.radius = radius;
@@ -74,7 +74,7 @@ private:
 
 	//Visuals
 	GameObject* m_pVisuals;
-	ModelAnimator* pAnimator{};
+	ModelAnimator* m_pAnimator{};
 
 	int m_AnimationClipId{ 0 };
 	float m_AnimationSpeed{ 1.f };
@@ -82,6 +82,6 @@ private:
 	char** m_ClipNames{};
 	UINT m_ClipCount{};
 
-	CharacterAnimation m_pCharacterState{ CharacterAnimation::Idle };
+	CharacterAnimation m_CharacterState{ CharacterAnimation::Idle };
 };
 

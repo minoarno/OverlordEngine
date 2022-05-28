@@ -10,6 +10,7 @@
 #include "Prefabs/Character.h"
 
 #include "Prefabs/UI/HUD.h"
+#include "Prefabs/UI/Button.h"
 
 Level1::Level1()
 	: GameScene{L"Level 1"}
@@ -27,17 +28,6 @@ void Level1::Initialize()
 
 	const auto pGroundMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow>(); //Shadow variant
 	pGroundMaterial->SetDiffuseTexture(L"Textures/GroundDirt.png");
-
-	//Ground Mesh
-	//***********
-	const auto pGroundObj = new GameObject();
-	const auto pGroundModel = new ModelComponent(L"Meshes/UnitPlane.ovm");
-	pGroundModel->SetMaterial(pGroundMaterial);
-
-	pGroundObj->AddComponent(pGroundModel);
-	pGroundObj->GetTransform()->Scale(10.0f, 10.0f, 10.0f);
-
-	AddChild(pGroundObj);
 
 	//Ground Plane
 	const auto pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
@@ -89,15 +79,62 @@ void Level1::Initialize()
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
 	//HUD
-	AddChild(new HUD{});
+	m_pHUD = AddChild(new HUD{});
+
+	//In Game Buttons
+	int index = 0;
+	m_pButtons.push_back(new Button(L"Textures/UI/MainMenuButton.png", [&]() { SceneManager::Get()->SetActiveGameScene(L"MainMenu"); }));
+	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 150, .5f);
+	m_pButtons[index]->SetActive(false);
+	AddChild(m_pButtons[index]);
+
+	index = 1;
+	m_pButtons.push_back(new Button(L"Textures/UI/RestartButton.png", [&]() { Reset(); }));
+	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 350, .5f);
+	m_pButtons[index]->SetActive(false);
+	AddChild(m_pButtons[index]);
+
+	index = 2;
+	m_pButtons.push_back(new Button(L"Textures/UI/ExitButton.png", [&]() { OverlordGame::Stop(); }));
+	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 550, .5f);
+	m_pButtons[index]->SetActive(false);
+	AddChild(m_pButtons[index]);
 
 	//Enemies
 	auto enemy0 = AddChild(new RobotEnemy{});
 	enemy0->GetTransform()->Translate(20, 30, 0);
+
+
 }
 
 void Level1::Update()
 {
+	if (m_SceneContext.pInput->IsActionTriggered(Settings))
+	{
+		if (m_SceneContext.pGameTime->IsRunning())
+		{
+			m_SceneContext.pGameTime->Stop();
+			for (Button* button : m_pButtons)
+			{
+				button->SetActive(true);
+			}
+		}
+		else
+		{
+			m_SceneContext.pGameTime->Start();
+			for (Button* button : m_pButtons)
+			{
+				button->SetActive(false);
+			}
+		}
+	}
+	if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
+	{
+		for (Button* button : m_pButtons)
+		{
+			button->Press(m_SceneContext);
+		}
+	}
 }
 
 void Level1::Draw()
@@ -107,4 +144,23 @@ void Level1::Draw()
 void Level1::OnGUI()
 {
 	m_pCharacter->DrawImGui();
+}
+
+void Level1::OnSceneActivated()
+{
+	Reset();
+}
+
+void Level1::Reset()
+{
+	for (Button* button : m_pButtons)
+	{
+		button->SetActive(false);
+	}
+
+	m_pCharacter->GetTransform()->Translate(0.f, 30.f, -10.f);
+
+	m_pHUD->SetAmountBolts(0);
+
+	m_SceneContext.pGameTime->Start();
 }

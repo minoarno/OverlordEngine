@@ -6,10 +6,11 @@
 
 #include "Materials/Shadow/DiffuseMaterial_Shadow_Skinned.h"
 
-Character::Character(const CharacterDesc& characterDesc) :
-	m_CharacterDesc{ characterDesc },
-	m_MoveAcceleration(characterDesc.maxMoveSpeed / characterDesc.moveAccelerationTime),
-	m_FallAcceleration(characterDesc.maxFallSpeed / characterDesc.fallAccelerationTime)
+Character::Character(const CharacterDesc& characterDesc)
+	: m_CharacterDesc{ characterDesc }
+	, m_MoveAcceleration(characterDesc.maxMoveSpeed / characterDesc.moveAccelerationTime)
+	, m_FallAcceleration(characterDesc.maxFallSpeed / characterDesc.fallAccelerationTime)
+	, m_pVisuals{ nullptr }
 {}
 
 Character::~Character()
@@ -57,23 +58,13 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 
 	float scale = 0.01f;
 	m_pVisuals->GetTransform()->Scale(scale, scale, scale);
-	m_pVisuals->GetTransform()->Translate(0, -m_CharacterDesc.controller.height * .8f, 0);
+	m_pVisuals->GetTransform()->Translate(0, -m_CharacterDesc.controller.height * 1.1f, 0);
 
-	pAnimator = pModel->GetAnimator();
-	pAnimator->SetAnimation(m_AnimationClipId);
-	pAnimator->SetAnimationSpeed(m_AnimationSpeed);
-
-	//Gather Clip Names
-	m_ClipCount = pAnimator->GetClipCount();
-	m_ClipNames = new char* [m_ClipCount];
-	for (UINT i{ 0 }; i < m_ClipCount; ++i)
-	{
-		auto clipName = StringUtil::utf8_encode(pAnimator->GetClip(static_cast<int>(i)).name);
-		const auto clipSize = clipName.size();
-		m_ClipNames[i] = new char[clipSize + 1];
-		strncpy_s(m_ClipNames[i], clipSize + 1, clipName.c_str(), clipSize);
-	}
-
+	m_pAnimator = pModel->GetAnimator();
+	m_CharacterState = CharacterAnimation::Idle;
+	m_pAnimator->SetAnimation(m_CharacterState);
+	m_pAnimator->SetAnimationSpeed(m_AnimationSpeed);
+	m_pAnimator->Play();
 }
 
 void Character::Update(const SceneContext& sceneContext)
@@ -229,10 +220,34 @@ void Character::Update(const SceneContext& sceneContext)
 		//The above is a simple implementation of Movement Dynamics, adjust the code to further improve the movement logic and behaviour.
 		//Also, it can be usefull to use a seperate RayCast to check if the character is grounded (more responsive)
 		
-		DirectX::XMVECTOR displacementVector{ DirectX::XMLoadFloat3(&m_TotalVelocity) * sceneContext.pGameTime->GetElapsed() };
 		DirectX::XMFLOAT3 displacementFloat3;
-		DirectX::XMStoreFloat3(&displacementFloat3, displacementVector);
+		DirectX::XMStoreFloat3(&displacementFloat3, DirectX::XMLoadFloat3(&m_TotalVelocity)* sceneContext.pGameTime->GetElapsed());
 		m_pControllerComponent->Move(displacementFloat3);
+
+		if (abs(m_TotalVelocity.x) < epsilon && abs(m_TotalVelocity.y) < 1 && abs(m_TotalVelocity.z) < epsilon)
+		{
+			if (m_CharacterState != CharacterAnimation::Idle)
+			{
+				m_CharacterState = CharacterAnimation::Idle;
+				m_pAnimator->SetAnimation(m_CharacterState);
+			}
+		}
+		else if (abs(m_TotalVelocity.y) > 1)
+		{
+			if (m_CharacterState != CharacterAnimation::Jumping)
+			{
+				m_CharacterState = CharacterAnimation::Jumping;
+				m_pAnimator->SetAnimation(m_CharacterState);
+			}
+		}
+		else
+		{
+			if (m_CharacterState != CharacterAnimation::Running)
+			{
+				m_CharacterState = CharacterAnimation::Running;
+				m_pAnimator->SetAnimation(m_CharacterState);
+			}
+		}
 	}
 }
 
@@ -274,35 +289,35 @@ void Character::DrawImGui()
 			m_pCameraComponent->SetActive(isActive);
 		}
 	}
-	if (ImGui::CollapsingHeader("Visuals"))
-	{
-		if (ImGui::Button(pAnimator->IsPlaying() ? "PAUSE" : "PLAY"))
-		{
-			if (pAnimator->IsPlaying())pAnimator->Pause();
-			else pAnimator->Play();
-		}
-
-		if (ImGui::Button("RESET"))
-		{
-			pAnimator->Reset();
-		}
-
-		ImGui::Dummy({ 0,5 });
-
-		bool reversed = pAnimator->IsReversed();
-		if (ImGui::Checkbox("Play Reversed", &reversed))
-		{
-			pAnimator->SetPlayReversed(reversed);
-		}
-
-		if (ImGui::ListBox("Animation Clip", &m_AnimationClipId, m_ClipNames, static_cast<int>(m_ClipCount)))
-		{
-			pAnimator->SetAnimation(m_AnimationClipId);
-		}
-
-		if (ImGui::SliderFloat("Animation Speed", &m_AnimationSpeed, 0.f, 4.f))
-		{
-			pAnimator->SetAnimationSpeed(m_AnimationSpeed);
-		}
-	}
+	//if (ImGui::CollapsingHeader("Visuals"))
+	//{
+	//	if (ImGui::Button(m_pAnimator->IsPlaying() ? "PAUSE" : "PLAY"))
+	//	{
+	//		if (m_pAnimator->IsPlaying())m_pAnimator->Pause();
+	//		else m_pAnimator->Play();
+	//	}
+	//
+	//	if (ImGui::Button("RESET"))
+	//	{
+	//		m_pAnimator->Reset();
+	//	}
+	//
+	//	ImGui::Dummy({ 0,5 });
+	//
+	//	bool reversed = m_pAnimator->IsReversed();
+	//	if (ImGui::Checkbox("Play Reversed", &reversed))
+	//	{
+	//		m_pAnimator->SetPlayReversed(reversed);
+	//	}
+	//
+	//	if (ImGui::ListBox("Animation Clip", &m_AnimationClipId, m_ClipNames, static_cast<int>(m_ClipCount)))
+	//	{
+	//		m_pAnimator->SetAnimation(m_AnimationClipId);
+	//	}
+	//
+	//	if (ImGui::SliderFloat("Animation Speed", &m_AnimationSpeed, 0.f, 4.f))
+	//	{
+	//		m_pAnimator->SetAnimationSpeed(m_AnimationSpeed);
+	//	}
+	//}
 }
