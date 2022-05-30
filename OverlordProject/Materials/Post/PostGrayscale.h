@@ -1,7 +1,7 @@
 #pragma once
 //Resharper Disable All
 
-class PostGrayscale : public PostProcessingMaterial
+class PostGrayscale final : public PostProcessingMaterial
 {
 public:
 	PostGrayscale();

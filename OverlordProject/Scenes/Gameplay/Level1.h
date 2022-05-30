@@ -1,6 +1,10 @@
 #pragma once
+class HUD;
 class Button;
+class PostBloom;
 class Character;
+class FMOD::Sound;
+class FMOD::ChannelGroup;
 class Level1 : public GameScene
 {
 public:
@@ -35,8 +39,18 @@ protected:
 		Settings
 	};
 private:
+	//Character
 	Character* m_pCharacter{nullptr};
+
+	//HUD and UI
 	std::vector<Button*> m_pButtons;
-	HUD* m_pHUD{nullptr};
+	HUD* m_pHUD;
+
+	//Audio
+	FMOD::Sound* m_pBackgroundSoundFx;
+	FMOD::ChannelGroup* m_pSoundEffectGroup;
+
+	//Post Processing
+	PostBloom* m_pPostBloom;
 };
 

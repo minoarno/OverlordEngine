@@ -1,4 +1,5 @@
 #pragma once
+class Character;
 class ColorMaterial_Shadow_Skinned;
 class RobotEnemy : public GameObject
 {
@@ -11,11 +12,19 @@ public:
 	RobotEnemy& operator=(const RobotEnemy& other) = delete;
 	RobotEnemy& operator=(RobotEnemy&& other) noexcept = delete;
 
+	void SetCharacter(Character* pCharacter) { m_pCharacter = pCharacter; };
+
+	void SetPositions(const XMFLOAT3& pos1, const XMFLOAT3& pos2);
 protected:
 	void Initialize(const SceneContext& sceneContext) override;
+	void Update(const SceneContext& sceneContext) override;
 
-private:
-	ColorMaterial_Shadow_Skinned* m_pEyeMat{nullptr};
-	GameObject* m_pVisuals{nullptr};
+	ColorMaterial_Shadow_Skinned* m_pEyeMat{ nullptr };
+	GameObject* m_pVisuals{ nullptr };
+	Character* m_pCharacter{ nullptr };
+
+	XMFLOAT3 m_Position1, m_Position2, m_Target;
+	float m_SquaredTriggerDistance{ 250 };
+	float m_MoveSpeed{ 20.f };
 };
 

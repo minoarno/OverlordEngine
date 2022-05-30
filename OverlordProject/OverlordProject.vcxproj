@@ -94,8 +94,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Materials\Shadow\ColorMaterial_Shadow_Skinned.cpp" />
+    <ClCompile Include="Materials\Post\PostBloom.cpp" />
     <ClCompile Include="Prefabs\UI\HUD.cpp" />
     <ClCompile Include="Prefabs\UI\Button.cpp" />
+    <ClCompile Include="Prefabs\RangedRobotEnemy.cpp" />
     <ClCompile Include="Scenes\Gameplay\MainMenu.cpp" />
     <ClCompile Include="Prefabs\RobotEnemy.cpp" />
     <ClCompile Include="Scenes\Gameplay\Level1.cpp" />
@@ -128,6 +130,8 @@
     <ClCompile Include="Scenes\Week 6\SoftwareSkinningScene_2.cpp" />
     <ClCompile Include="Scenes\Week 6\SoftwareSkinningScene_3.cpp" />
     <ClCompile Include="Scenes\Week 9\ParticleScene.cpp" />
+    <ClCompile Include="Prefabs\Skybox.cpp" />
+    <ClCompile Include="Materials\SkyboxMaterial.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdafx.h</PrecompiledHeaderFile>
@@ -153,8 +157,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Materials\Shadow\ColorMaterial_Shadow_Skinned.h" />
+    <ClInclude Include="Materials\Post\PostBloom.h" />
     <ClInclude Include="Prefabs\UI\HUD.h" />
     <ClInclude Include="Prefabs\UI\Button.h" />
+    <ClInclude Include="Prefabs\RangedRobotEnemy.h" />
     <ClInclude Include="Scenes\Gameplay\MainMenu.h" />
     <ClInclude Include="Prefabs\RobotEnemy.h" />
     <ClInclude Include="Scenes\Gameplay\Level1.h" />
@@ -187,6 +193,8 @@
     <ClInclude Include="Scenes\Week 6\SoftwareSkinningScene_2.h" />
     <ClInclude Include="Scenes\Week 6\SoftwareSkinningScene_3.h" />
     <ClInclude Include="Scenes\Week 9\ParticleScene.h" />
+    <ClInclude Include="Prefabs\Skybox.h" />
+    <ClInclude Include="Materials\SkyboxMaterial.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Scenes\Week 4\UberMaterialScene.h" />

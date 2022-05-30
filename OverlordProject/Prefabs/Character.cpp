@@ -65,6 +65,8 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	m_pAnimator->SetAnimation(m_CharacterState);
 	m_pAnimator->SetAnimationSpeed(m_AnimationSpeed);
 	m_pAnimator->Play();
+
+	SetTag(L"Friendly");
 }
 
 void Character::Update(const SceneContext& sceneContext)
@@ -289,35 +291,4 @@ void Character::DrawImGui()
 			m_pCameraComponent->SetActive(isActive);
 		}
 	}
-	//if (ImGui::CollapsingHeader("Visuals"))
-	//{
-	//	if (ImGui::Button(m_pAnimator->IsPlaying() ? "PAUSE" : "PLAY"))
-	//	{
-	//		if (m_pAnimator->IsPlaying())m_pAnimator->Pause();
-	//		else m_pAnimator->Play();
-	//	}
-	//
-	//	if (ImGui::Button("RESET"))
-	//	{
-	//		m_pAnimator->Reset();
-	//	}
-	//
-	//	ImGui::Dummy({ 0,5 });
-	//
-	//	bool reversed = m_pAnimator->IsReversed();
-	//	if (ImGui::Checkbox("Play Reversed", &reversed))
-	//	{
-	//		m_pAnimator->SetPlayReversed(reversed);
-	//	}
-	//
-	//	if (ImGui::ListBox("Animation Clip", &m_AnimationClipId, m_ClipNames, static_cast<int>(m_ClipCount)))
-	//	{
-	//		m_pAnimator->SetAnimation(m_AnimationClipId);
-	//	}
-	//
-	//	if (ImGui::SliderFloat("Animation Speed", &m_AnimationSpeed, 0.f, 4.f))
-	//	{
-	//		m_pAnimator->SetAnimationSpeed(m_AnimationSpeed);
-	//	}
-	//}
 }

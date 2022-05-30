@@ -23,6 +23,11 @@ namespace MathHelper
 		return a.x == b.x && a.y == b.y && a.z == b.z;
 	}
 
+	inline float SquaredDistance(const XMFLOAT3& a, const XMFLOAT3& b)
+	{
+		return pow(b.x - a.x,2.f) + pow(b.y - a.y, 2.f) + pow(b.z - a.z, 2.f);
+	}
+
 	inline bool XMFloat2Equals(const XMFLOAT2& a, const XMFLOAT2& b)
 	{
 		return a.x == b.x && a.y == b.y;

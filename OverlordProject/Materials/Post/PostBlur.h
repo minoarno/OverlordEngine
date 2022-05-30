@@ -1,7 +1,7 @@
 #pragma once
 //Resharper Disable All
 
-class PostBlur : public PostProcessingMaterial
+class PostBlur final : public PostProcessingMaterial
 {
 public:
 	PostBlur();

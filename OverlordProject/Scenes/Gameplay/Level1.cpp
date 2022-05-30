@@ -8,14 +8,25 @@
 //Prefabs
 #include "Prefabs/RobotEnemy.h"
 #include "Prefabs/Character.h"
+#include "Prefabs/Skybox.h"
 
+//UI
 #include "Prefabs/UI/HUD.h"
 #include "Prefabs/UI/Button.h"
 
+//Audio
+#include "Managers/SoundManager.h"
+
+//Post Processing
+#include "Materials/Post/PostBloom.h"
+
 Level1::Level1()
 	: GameScene{L"Level 1"}
+	, m_pHUD{ nullptr }
+	, m_pBackgroundSoundFx{ nullptr }
+	, m_pSoundEffectGroup{ nullptr }
+	, m_pPostBloom{ nullptr }
 {
-
 }
 
 Level1::~Level1()
@@ -60,19 +71,28 @@ void Level1::Initialize()
 	pLevelObject->GetTransform()->Rotate(90.f, 0.f, 0.f);
 
 	//Input
-	auto inputAction = InputAction(CharacterMoveLeft, InputState::down, 'A');
+	auto inputAction = InputAction(CharacterMoveLeft, InputState::down, 'Q');
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
 	inputAction = InputAction(CharacterMoveRight, InputState::down, 'D');
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
-	inputAction = InputAction(CharacterMoveForward, InputState::down, 'W');
+	inputAction = InputAction(CharacterMoveForward, InputState::down, 'Z');
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
 	inputAction = InputAction(CharacterMoveBackward, InputState::down, 'S');
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
 	inputAction = InputAction(CharacterJump, InputState::pressed, VK_SPACE, -1, XINPUT_GAMEPAD_A);
+	m_SceneContext.pInput->AddInputAction(inputAction);
+
+	inputAction = InputAction(CharacterShoot, InputState::pressed, 'A', -1, XINPUT_GAMEPAD_B);
+	m_SceneContext.pInput->AddInputAction(inputAction);
+
+	inputAction = InputAction(CharacterSlash, InputState::pressed, 'E', -1, XINPUT_GAMEPAD_Y);
+	m_SceneContext.pInput->AddInputAction(inputAction);
+
+	inputAction = InputAction(CharacterGrenade, InputState::pressed, 'R', -1, XINPUT_GAMEPAD_X);
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
 	inputAction = InputAction(Settings, InputState::pressed, VK_ESCAPE, -1, XINPUT_GAMEPAD_START);
@@ -104,14 +124,35 @@ void Level1::Initialize()
 	auto enemy0 = AddChild(new RobotEnemy{});
 	enemy0->GetTransform()->Translate(20, 30, 0);
 
+	//Audio
+	auto pFmodSystem = SoundManager::Get()->GetSystem();
 
+	//Channel group
+	auto fmodResult = pFmodSystem->createChannelGroup("Sound Effects", &m_pSoundEffectGroup);
+	SoundManager::Get()->ErrorCheck(fmodResult);
+
+	//Background music
+	pFmodSystem->createStream("Resources/Audio/ReadyToFight.mp3", FMOD_DEFAULT, nullptr, &m_pBackgroundSoundFx);
+	SoundManager::Get()->ErrorCheck(fmodResult);
+
+	pFmodSystem->playSound(m_pBackgroundSoundFx, m_pSoundEffectGroup, false, nullptr);
+	m_pSoundEffectGroup->setVolume(0.3f);
+
+	AddChild(new Skybox{});
+
+	//Post Processing
+	m_pPostBloom = MaterialManager::Get()->CreateMaterial<PostBloom>();
+	AddPostProcessingEffect(m_pPostBloom);
+
+	m_pPostBloom->SetThreshold(0.1f);
+	m_pPostBloom->SetStrength(.8f);
 }
 
 void Level1::Update()
 {
-	if (m_SceneContext.pInput->IsActionTriggered(Settings))
+	if (m_SceneContext.pGameTime->IsRunning())
 	{
-		if (m_SceneContext.pGameTime->IsRunning())
+		if (m_SceneContext.pInput->IsActionTriggered(Settings))
 		{
 			m_SceneContext.pGameTime->Stop();
 			for (Button* button : m_pButtons)
@@ -119,7 +160,10 @@ void Level1::Update()
 				button->SetActive(true);
 			}
 		}
-		else
+	}
+	else
+	{
+		if (m_SceneContext.pInput->IsActionTriggered(Settings))
 		{
 			m_SceneContext.pGameTime->Start();
 			for (Button* button : m_pButtons)
@@ -127,14 +171,17 @@ void Level1::Update()
 				button->SetActive(false);
 			}
 		}
-	}
-	if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
-	{
-		for (Button* button : m_pButtons)
+
+		if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
 		{
-			button->Press(m_SceneContext);
+			for (Button* button : m_pButtons)
+			{
+				button->Press(m_SceneContext);
+			}
 		}
 	}
+
+
 }
 
 void Level1::Draw()
@@ -161,6 +208,11 @@ void Level1::Reset()
 	m_pCharacter->GetTransform()->Translate(0.f, 30.f, -10.f);
 
 	m_pHUD->SetAmountBolts(0);
+
+	auto pFmodSystem = SoundManager::Get()->GetSystem();
+	pFmodSystem->recordStop(-1);
+	pFmodSystem->playSound(m_pBackgroundSoundFx, m_pSoundEffectGroup, false, nullptr);
+	m_pSoundEffectGroup->setVolume(0.3f);
 
 	m_SceneContext.pGameTime->Start();
 }

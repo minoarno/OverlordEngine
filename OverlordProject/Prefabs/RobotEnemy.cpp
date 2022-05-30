@@ -3,8 +3,19 @@
 
 #include "Materials/Shadow/ColorMaterial_Shadow_Skinned.h"
 
+#include "Prefabs/Character.h"
+
 RobotEnemy::RobotEnemy()
+	: m_Position1{ 0,0,0 }
+	, m_Position2{ 0,0,0 }
+	, m_Target{ 0,0,0 }
 {
+}
+
+void RobotEnemy::SetPositions(const XMFLOAT3& pos1, const XMFLOAT3& pos2)
+{
+	m_Position1 = pos1;
+	m_Position2 = pos2;
 }
 
 void RobotEnemy::Initialize(const SceneContext&)
@@ -40,9 +51,33 @@ void RobotEnemy::Initialize(const SceneContext&)
 		pAnimator->Play();
 	}
 
-	m_pEyeMat->SetColor(DirectX::XMFLOAT4{ DirectX::Colors::Red });
+	
 
 	const auto pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
 	auto rb = AddComponent(new RigidBodyComponent());
 	rb->AddCollider(PxBoxGeometry{ 2.f,3.f,2.f }, *pDefaultMaterial);
+
+	SetTag(L"Enemy");
+}
+
+void RobotEnemy::Update(const SceneContext& sceneContext)
+{
+	if (m_pCharacter != nullptr && MathHelper::SquaredDistance(m_pCharacter->GetTransform()->GetPosition(), GetTransform()->GetPosition()) < m_SquaredTriggerDistance)
+	{
+		m_Target = m_pCharacter->GetTransform()->GetPosition();
+		
+		m_pEyeMat->SetColor(DirectX::XMFLOAT4{ DirectX::Colors::Red });
+	}
+	else
+	{
+		if (MathHelper::SquaredDistance(m_Target, GetTransform()->GetPosition()) < 1.f)
+		{
+			m_Target = (MathHelper::XMFloat3Equals(m_Target, m_Position1)) ? m_Position2 : m_Position2;
+		}
+	}
+
+	XMFLOAT3 dir{};
+	XMStoreFloat3(&dir, XMVectorSubtract(XMLoadFloat3(&m_Target), XMLoadFloat3(&GetTransform()->GetPosition())) * m_MoveSpeed * sceneContext.pGameTime->GetElapsed());
+
+	GetTransform()->Translate(dir);
 }
