@@ -25,19 +25,6 @@ protected:
 
 	void OnSceneActivated() override;
 	void Reset();
-
-	enum InputIds
-	{
-		CharacterMoveLeft,
-		CharacterMoveRight,
-		CharacterMoveForward,
-		CharacterMoveBackward,
-		CharacterJump,
-		CharacterShoot,
-		CharacterSlash,
-		CharacterGrenade,
-		Settings
-	};
 private:
 	//Character
 	Character* m_pCharacter{nullptr};

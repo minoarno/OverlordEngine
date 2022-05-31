@@ -43,7 +43,8 @@ public:
 		Slashing = 3,
 		Throwing = 4,
 		Running = 5,
-		Jumping = 6
+		Jumping = 6,
+		Falling = 7
 	};
 
 	Character(const CharacterDesc& characterDesc);
@@ -83,5 +84,8 @@ private:
 	UINT m_ClipCount{};
 
 	CharacterAnimation m_CharacterState{ CharacterAnimation::Idle };
+
+	float m_AnimationDuration{ 1.f };
+	float m_AnimationTimer{ 0.f };
 };
 

@@ -226,30 +226,84 @@ void Character::Update(const SceneContext& sceneContext)
 		DirectX::XMStoreFloat3(&displacementFloat3, DirectX::XMLoadFloat3(&m_TotalVelocity)* sceneContext.pGameTime->GetElapsed());
 		m_pControllerComponent->Move(displacementFloat3);
 
-		if (abs(m_TotalVelocity.x) < epsilon && abs(m_TotalVelocity.y) < 1 && abs(m_TotalVelocity.z) < epsilon)
+		if (m_CharacterState != CharacterAnimation::Throwing && m_CharacterState != CharacterAnimation::Slashing && m_CharacterState != CharacterAnimation::Shooting)
 		{
-			if (m_CharacterState != CharacterAnimation::Idle)
+			if (abs(m_TotalVelocity.x) < epsilon && abs(m_TotalVelocity.y) < 1 && abs(m_TotalVelocity.z) < epsilon)
 			{
-				m_CharacterState = CharacterAnimation::Idle;
-				m_pAnimator->SetAnimation(m_CharacterState);
+				if (m_CharacterState != CharacterAnimation::Idle)
+				{
+					m_CharacterState = CharacterAnimation::Idle;
+					m_pAnimator->SetAnimation(m_CharacterState);
+				}
 			}
-		}
-		else if (abs(m_TotalVelocity.y) > 1)
-		{
-			if (m_CharacterState != CharacterAnimation::Jumping)
+			else if (m_TotalVelocity.y > 1)
 			{
-				m_CharacterState = CharacterAnimation::Jumping;
-				m_pAnimator->SetAnimation(m_CharacterState);
+				if (m_CharacterState != CharacterAnimation::Jumping)
+				{
+					m_CharacterState = CharacterAnimation::Jumping;
+					m_pAnimator->SetAnimation(m_CharacterState);
+				}
+			}
+			else if (m_TotalVelocity.y < -1)
+			{
+				if (m_CharacterState != CharacterAnimation::Falling)
+				{
+					m_CharacterState = CharacterAnimation::Falling;
+					m_pAnimator->SetAnimation(m_CharacterState);
+				}
+			}
+			else
+			{
+				if (m_CharacterState != CharacterAnimation::Running)
+				{
+					m_CharacterState = CharacterAnimation::Running;
+					m_pAnimator->SetAnimation(m_CharacterState);
+				}
 			}
 		}
 		else
 		{
-			if (m_CharacterState != CharacterAnimation::Running)
+			m_AnimationTimer += elapsedTime;
+			if (m_AnimationTimer > m_AnimationDuration)
 			{
-				m_CharacterState = CharacterAnimation::Running;
-				m_pAnimator->SetAnimation(m_CharacterState);
+				m_pAnimator->SetAnimation(CharacterAnimation::Idle);
+				m_CharacterState = CharacterAnimation::Idle;
 			}
 		}
+		
+
+		if (sceneContext.pInput->IsActionTriggered(InputIds::CharacterGrenade))
+		{
+			if (m_CharacterState != CharacterAnimation::Throwing && m_CharacterState != CharacterAnimation::Slashing && m_CharacterState != CharacterAnimation::Shooting)
+			{
+				m_CharacterState = CharacterAnimation::Throwing;
+				m_pAnimator->SetAnimation(m_CharacterState);
+				m_AnimationTimer = 0;
+				m_AnimationDuration = 1.f;
+			}
+		}
+		if (sceneContext.pInput->IsActionTriggered(InputIds::CharacterSlash))
+		{
+			if (m_CharacterState != CharacterAnimation::Throwing && m_CharacterState != CharacterAnimation::Slashing && m_CharacterState != CharacterAnimation::Shooting)
+			{
+				m_CharacterState = CharacterAnimation::Slashing;
+				m_pAnimator->SetAnimation(m_CharacterState);
+				m_AnimationTimer = 0;
+				m_AnimationDuration = 1.f;
+			}
+		}
+		if (sceneContext.pInput->IsActionTriggered(InputIds::CharacterShoot))
+		{
+			if (m_CharacterState != CharacterAnimation::Throwing && m_CharacterState != CharacterAnimation::Slashing && m_CharacterState != CharacterAnimation::Shooting)
+			{
+				m_CharacterState = CharacterAnimation::Shooting;
+				m_pAnimator->SetAnimation(m_CharacterState);
+				m_AnimationTimer = 0;
+				m_AnimationDuration = .5f;
+			}
+		}
+
+
 	}
 }
 

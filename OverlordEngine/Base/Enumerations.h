@@ -16,6 +16,19 @@ enum class InputState
 	down
 };
 
+enum InputIds
+{
+	CharacterMoveLeft,
+	CharacterMoveRight,
+	CharacterMoveForward,
+	CharacterMoveBackward,
+	CharacterJump,
+	CharacterShoot,
+	CharacterSlash,
+	CharacterGrenade,
+	Settings
+};
+
 struct InputAction
 {
 	InputAction() :

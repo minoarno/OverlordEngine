@@ -86,13 +86,13 @@ void Level1::Initialize()
 	inputAction = InputAction(CharacterJump, InputState::pressed, VK_SPACE, -1, XINPUT_GAMEPAD_A);
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
-	inputAction = InputAction(CharacterShoot, InputState::pressed, 'A', -1, XINPUT_GAMEPAD_B);
-	m_SceneContext.pInput->AddInputAction(inputAction);
-
-	inputAction = InputAction(CharacterSlash, InputState::pressed, 'E', -1, XINPUT_GAMEPAD_Y);
+	inputAction = InputAction(CharacterShoot, InputState::pressed, 'A', -1, XINPUT_GAMEPAD_RIGHT_SHOULDER);
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
 	inputAction = InputAction(CharacterGrenade, InputState::pressed, 'R', -1, XINPUT_GAMEPAD_X);
+	m_SceneContext.pInput->AddInputAction(inputAction);
+
+	inputAction = InputAction(CharacterSlash, InputState::pressed, 'E', -1, XINPUT_GAMEPAD_B);
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
 	inputAction = InputAction(Settings, InputState::pressed, VK_ESCAPE, -1, XINPUT_GAMEPAD_START);
@@ -121,8 +121,10 @@ void Level1::Initialize()
 	AddChild(m_pButtons[index]);
 
 	//Enemies
-	auto enemy0 = AddChild(new RobotEnemy{});
+	RobotEnemy* enemy0 = AddChild(new RobotEnemy{});
 	enemy0->GetTransform()->Translate(20, 30, 0);
+	enemy0->SetPositions(XMFLOAT3{ 20,30,0 }, XMFLOAT3{ 20,30,100 });
+
 
 	//Audio
 	auto pFmodSystem = SoundManager::Get()->GetSystem();
@@ -136,7 +138,7 @@ void Level1::Initialize()
 	SoundManager::Get()->ErrorCheck(fmodResult);
 
 	pFmodSystem->playSound(m_pBackgroundSoundFx, m_pSoundEffectGroup, false, nullptr);
-	m_pSoundEffectGroup->setVolume(0.3f);
+	m_pSoundEffectGroup->setVolume(0.f);
 
 	AddChild(new Skybox{});
 
@@ -212,7 +214,7 @@ void Level1::Reset()
 	auto pFmodSystem = SoundManager::Get()->GetSystem();
 	pFmodSystem->recordStop(-1);
 	pFmodSystem->playSound(m_pBackgroundSoundFx, m_pSoundEffectGroup, false, nullptr);
-	m_pSoundEffectGroup->setVolume(0.3f);
+	//m_pSoundEffectGroup->setVolume(0.3f);
 
 	m_SceneContext.pGameTime->Start();
 }
