@@ -37,7 +37,7 @@ void ParticleScene::Initialize()
 void ParticleScene::Update()
 {
 	//Rotate Teapot
-	m_pTeapot->GetTransform()->Rotate(.0f, XM_PIDIV2 * m_SceneContext.pGameTime->GetTotal(), .0f, false);
+	//m_pTeapot->GetTransform()->Rotate(.0f, XM_PIDIV2 * m_SceneContext.pGameTime->GetTotal(), .0f, false);
 
 	//Move Particle System
 	auto particlePosition = m_pEmitter->GetTransform()->GetPosition();

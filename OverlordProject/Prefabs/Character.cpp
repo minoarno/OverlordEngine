@@ -28,11 +28,12 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	m_pControllerComponent = AddComponent(new ControllerComponent(m_CharacterDesc.controller));
 
 	//Camera
-	const auto pCamera = AddChild(new FixedCamera());
+	GameObject* pCamera = AddChild(new FixedCamera());
 	m_pCameraComponent = pCamera->GetComponent<CameraComponent>();
 	m_pCameraComponent->SetActive(true); //Uncomment to make this camera the active camera
 
-	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * 1.5f, -15.f);
+	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * 1.5f, 15.f);
+	pCamera->GetTransform()->Rotate(0, 180, 0);
 
 	//Visuals
 //**************
@@ -54,7 +55,7 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	pModel->SetMaterial(pMaterial1, 1);
 	pModel->SetMaterial(pMaterial2, 2);
 	pModel->SetMaterial(pMaterial3, 3);
-	pModel->GetTransform()->Rotate(0, 180, 0);
+	pModel->GetTransform()->Rotate(0, 0, 0);
 
 	float scale = 0.01f;
 	m_pVisuals->GetTransform()->Scale(scale, scale, scale);
@@ -131,8 +132,8 @@ void Character::Update(const SceneContext& sceneContext)
 
 		//Retrieve the TransformComponent
 		//Retrieve the forward & right vector (as XMVECTOR) from the TransformComponent
-		XMVECTOR forward = DirectX::XMLoadFloat3(&GetTransform()->GetForward()) * move.y;
-		XMVECTOR right = DirectX::XMLoadFloat3(&GetTransform()->GetRight()) * move.x;
+		XMVECTOR forward = DirectX::XMLoadFloat3(&m_pCameraComponent->GetGameObject()->GetTransform()->GetForward()) * move.y;
+		XMVECTOR right = DirectX::XMLoadFloat3(&m_pCameraComponent->GetGameObject()->GetTransform()->GetRight()) * move.x;
 
 		//***************
 		//CAMERA ROTATION
@@ -145,8 +146,8 @@ void Character::Update(const SceneContext& sceneContext)
 		m_TotalYaw += look.x * m_CharacterDesc.rotationSpeed * elapsedTime;
 		m_TotalPitch -= look.y * m_CharacterDesc.rotationSpeed * elapsedTime;
 
-		GetTransform()->Rotate(m_TotalPitch, m_TotalYaw,0);
-		m_pVisuals->GetTransform()->Rotate(-m_TotalPitch + 180, 0,180);
+		GetTransform()->Rotate(m_TotalPitch, m_TotalYaw, 0);
+		m_pVisuals->GetTransform()->Rotate(-m_TotalPitch, 0, 0);
 
 		//********
 		//MOVEMENT

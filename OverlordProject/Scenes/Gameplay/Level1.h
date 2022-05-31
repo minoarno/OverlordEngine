@@ -1,8 +1,10 @@
 #pragma once
 class HUD;
+
 class Button;
 class PostBloom;
 class Character;
+class RobotEnemy;
 class FMOD::Sound;
 class FMOD::ChannelGroup;
 class Level1 : public GameScene
@@ -29,6 +31,9 @@ private:
 	//Character
 	Character* m_pCharacter{nullptr};
 
+	//Enemies
+	std::vector<RobotEnemy*> m_pEnemies;
+
 	//HUD and UI
 	std::vector<Button*> m_pButtons;
 	HUD* m_pHUD;
@@ -36,6 +41,7 @@ private:
 	//Audio
 	FMOD::Sound* m_pBackgroundSoundFx;
 	FMOD::ChannelGroup* m_pSoundEffectGroup;
+	float m_MusicVolume{};
 
 	//Post Processing
 	PostBloom* m_pPostBloom;

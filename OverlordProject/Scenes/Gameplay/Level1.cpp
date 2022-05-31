@@ -58,20 +58,34 @@ void Level1::Initialize()
 	m_pCharacter->GetTransform()->Translate(0.f, 10.f * levelScale, -10.f);
 
 	//Ground
-	const auto pLevelObject = AddChild(new GameObject());
-	const auto pLevelMesh = pLevelObject->AddComponent(new ModelComponent(L"Meshes/Ground1.ovm"));
-	auto matGround = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow>();
+	GameObject* pLevelObject = AddChild(new GameObject());
+	ModelComponent* pLevelMesh = pLevelObject->AddComponent(new ModelComponent(L"Meshes/Ground1.ovm"));
+	DiffuseMaterial_Shadow* matGround = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow>();
 	matGround->SetDiffuseTexture(L"Textures/GroundDirt.png");
 	pLevelMesh->SetMaterial(matGround);
 
-	const auto pLevelActor = pLevelObject->AddComponent(new RigidBodyComponent(true));
-	const auto pPxTriangleMesh = ContentManager::Load<PxTriangleMesh>(L"Meshes/Ground1.ovpt");
+	RigidBodyComponent* pLevelActor = pLevelObject->AddComponent(new RigidBodyComponent(true));
+	PxTriangleMesh* pPxTriangleMesh = ContentManager::Load<PxTriangleMesh>(L"Meshes/Ground1.ovpt");
 	pLevelActor->AddCollider(PxTriangleMeshGeometry(pPxTriangleMesh, PxMeshScale({ levelScale,levelScale,levelScale })), *pDefaultMaterial);
 	pLevelObject->GetTransform()->Scale(levelScale, levelScale, levelScale);
 	pLevelObject->GetTransform()->Rotate(90.f, 0.f, 0.f);
 
+	levelScale = 10.f;
+	pLevelObject = AddChild(new GameObject());
+	pLevelMesh = pLevelObject->AddComponent(new ModelComponent(L"Meshes/Ground2.ovm"));
+	matGround = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow>();
+	matGround->SetDiffuseTexture(L"Textures/GroundDirt.png");
+	pLevelMesh->SetMaterial(matGround);
+
+	pLevelActor = pLevelObject->AddComponent(new RigidBodyComponent(true));
+	pPxTriangleMesh = ContentManager::Load<PxTriangleMesh>(L"Meshes/Ground2.ovpt");
+	pLevelActor->AddCollider(PxTriangleMeshGeometry(pPxTriangleMesh, PxMeshScale({ levelScale,levelScale,levelScale })), *pDefaultMaterial);
+	pLevelActor->Translate(XMFLOAT3{ 0,30, 100 });
+	pLevelObject->GetTransform()->Scale(levelScale, levelScale, levelScale);
+	pLevelObject->GetTransform()->Rotate(90.f, 0.f, 0.f);
+
 	//Input
-	auto inputAction = InputAction(CharacterMoveLeft, InputState::down, 'Q');
+	InputAction inputAction = InputAction(CharacterMoveLeft, InputState::down, 'Q');
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
 	inputAction = InputAction(CharacterMoveRight, InputState::down, 'D');
@@ -121,10 +135,11 @@ void Level1::Initialize()
 	AddChild(m_pButtons[index]);
 
 	//Enemies
-	RobotEnemy* enemy0 = AddChild(new RobotEnemy{});
-	enemy0->GetTransform()->Translate(20, 30, 0);
-	enemy0->SetPositions(XMFLOAT3{ 20,30,0 }, XMFLOAT3{ 20,30,100 });
-
+	index = 0;
+	m_pEnemies.emplace_back(AddChild(new RobotEnemy{}));
+	m_pEnemies[index]->GetTransform()->Translate(0, 26, 0);
+	m_pEnemies[index]->SetPositions(XMFLOAT3{ 20,26,0 }, XMFLOAT3{ 0,26,0 });
+	m_pEnemies[index]->SetCharacter(m_pCharacter);
 
 	//Audio
 	auto pFmodSystem = SoundManager::Get()->GetSystem();
@@ -134,11 +149,13 @@ void Level1::Initialize()
 	SoundManager::Get()->ErrorCheck(fmodResult);
 
 	//Background music
+	m_MusicVolume = 0.f;
+
 	pFmodSystem->createStream("Resources/Audio/ReadyToFight.mp3", FMOD_DEFAULT, nullptr, &m_pBackgroundSoundFx);
 	SoundManager::Get()->ErrorCheck(fmodResult);
 
 	pFmodSystem->playSound(m_pBackgroundSoundFx, m_pSoundEffectGroup, false, nullptr);
-	m_pSoundEffectGroup->setVolume(0.f);
+	m_pSoundEffectGroup->setVolume(m_MusicVolume);
 
 	AddChild(new Skybox{});
 
@@ -207,14 +224,20 @@ void Level1::Reset()
 		button->SetActive(false);
 	}
 
+	//Character
 	m_pCharacter->GetTransform()->Translate(0.f, 30.f, -10.f);
+	m_pCharacter->GetTransform()->Rotate(0.f, 0.f, 0.f);
 
+	//Enemies
+	m_pEnemies[0]->GetTransform()->Translate(0, 26, 0);
+
+	//HUD
 	m_pHUD->SetAmountBolts(0);
 
 	auto pFmodSystem = SoundManager::Get()->GetSystem();
 	pFmodSystem->recordStop(-1);
 	pFmodSystem->playSound(m_pBackgroundSoundFx, m_pSoundEffectGroup, false, nullptr);
-	//m_pSoundEffectGroup->setVolume(0.3f);
+	m_pSoundEffectGroup->setVolume(m_MusicVolume);
 
 	m_SceneContext.pGameTime->Start();
 }

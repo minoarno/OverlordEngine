@@ -21,7 +21,10 @@ protected:
 
 	ColorMaterial_Shadow_Skinned* m_pEyeMat{ nullptr };
 	GameObject* m_pVisuals{ nullptr };
+	RigidBodyComponent* m_pRigidBody{ nullptr };
 	Character* m_pCharacter{ nullptr };
+
+	ParticleEmitterComponent* m_pEmitter{ nullptr };
 
 	XMFLOAT3 m_Position1, m_Position2, m_Target;
 	float m_SquaredTriggerDistance{ 250 };

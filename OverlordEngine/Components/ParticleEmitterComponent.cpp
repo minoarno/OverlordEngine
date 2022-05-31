@@ -29,7 +29,10 @@ void ParticleEmitterComponent::Initialize(const SceneContext& sceneContext)
 	TODO_W9(L"Implement Initialize");
 	//1. Use the MaterialManager to create an instance of the ParticleMaterial and store it in
 	//m_pParticleMaterial.Note that this member is STATIC, so only create an instance if it isn’t
-	m_pParticleMaterial = MaterialManager::Get()->CreateMaterial<ParticleMaterial>();
+	if (m_pParticleMaterial == nullptr)
+	{
+		m_pParticleMaterial = MaterialManager::Get()->CreateMaterial<ParticleMaterial>();
+	}
 
 	//2. Call CreateVertexBuffer() 
 	CreateVertexBuffer(sceneContext);
@@ -241,7 +244,7 @@ void ParticleEmitterComponent::SpawnParticle(Particle& p)
 
 	//d.Everything is in place to calculate the initial position
 		//i.vertexInfo.Position = ‘our random direction’ * ‘our random distance’
-	XMStoreFloat3(&p.vertexInfo.Position, XMLoadFloat3(&GetTransform()->GetPosition()) + randomDir * randomDistance);
+	XMStoreFloat3(&p.vertexInfo.Position, XMLoadFloat3(&GetTransform()->GetWorldPosition()) + randomDir * randomDistance);
 
 	//4. Size Initialization 
 	//a.Our vertexInfo.Size and initialSize are both equal to a random value that lays between MinSize and MaxSize(see EmitterSettings)
