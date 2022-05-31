@@ -23,11 +23,12 @@ void MainMenu::Initialize()
 
 	int index = 0;
 	m_pButtons.push_back(new Button(L"Textures/UI/StartButton.png", [&]() { SceneManager::Get()->SetActiveGameScene(L"Level 1"); }));
-	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 200, .5f);
+	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .4f, 300, .5f);
 	AddChild(m_pButtons[index]);
 
+	index = 1;
 	m_pButtons.push_back(new Button(L"Textures/UI/ExitButton.png", [&]() { OverlordGame::Stop(); }));
-	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 400, .5f);
+	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .4f, 500, .5f);
 	AddChild(m_pButtons[index]);
 
 	//Background
