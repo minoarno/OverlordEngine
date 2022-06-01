@@ -62,6 +62,9 @@ protected:
 	void Update(const SceneContext&) override;
 private:
 	CameraComponent* m_pCameraComponent{};
+	float m_MinPitch{};
+	float m_MaxPitch{};
+
 	ControllerComponent* m_pControllerComponent{};
 
 	CharacterDesc m_CharacterDesc;

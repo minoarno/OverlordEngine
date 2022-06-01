@@ -22,12 +22,12 @@ void MainMenu::Initialize()
 	m_pCameraComponent->SetActive(true);
 
 	int index = 0;
-	m_pButtons.push_back(new Button(L"Textures/UI/StartButton.png", [&]() { SceneManager::Get()->SetActiveGameScene(L"Level 1"); }));
+	m_pButtons.push_back(new Button(L"Textures/UI/StartButtonNormal.png", L"Textures/UI/StartButtonActivated.png", [&]() { SceneManager::Get()->SetActiveGameScene(L"Level 1"); }));
 	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .4f, 300, .5f);
 	AddChild(m_pButtons[index]);
 
 	index = 1;
-	m_pButtons.push_back(new Button(L"Textures/UI/ExitButton.png", [&]() { OverlordGame::Stop(); }));
+	m_pButtons.push_back(new Button(L"Textures/UI/ExitButtonNormal.png", L"Textures/UI/ExitButtonActivated.png", [&]() { OverlordGame::Stop(); }));
 	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .4f, 500, .5f);
 	AddChild(m_pButtons[index]);
 
@@ -47,6 +47,15 @@ void MainMenu::Update()
 		for (Button* button : m_pButtons)
 		{
 			button->Press(m_SceneContext);
+		}
+	}
+	POINT mousePos = InputManager::GetMousePosition();
+	POINT prevMousePos = InputManager::GetMousePosition(true);
+	if (mousePos.x != prevMousePos.x || mousePos.y != prevMousePos.y)
+	{
+		for (Button* button : m_pButtons)
+		{
+			button->IsHovering(m_SceneContext);
 		}
 	}
 }

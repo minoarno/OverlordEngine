@@ -146,7 +146,17 @@ void Character::Update(const SceneContext& sceneContext)
 		m_TotalYaw += look.x * m_CharacterDesc.rotationSpeed * elapsedTime;
 		m_TotalPitch -= look.y * m_CharacterDesc.rotationSpeed * elapsedTime;
 
+		//if (m_TotalPitch > m_MaxPitch)
+		//{
+		//	m_TotalPitch = m_MaxPitch;
+		//}
+		//else if (m_TotalPitch < m_MinPitch)
+		//{
+		//	m_TotalPitch = m_MinPitch;
+		//}
+
 		GetTransform()->Rotate(m_TotalPitch, m_TotalYaw, 0);
+		//Clamp()
 		m_pVisuals->GetTransform()->Rotate(-m_TotalPitch, 0, 0);
 
 		//********

@@ -20,6 +20,12 @@ void RobotEnemy::SetPositions(const XMFLOAT3& pos1, const XMFLOAT3& pos2)
 	m_Position2 = pos2;
 }
 
+void RobotEnemy::Reset()
+{
+	m_pRigidBody->ClearForce();
+	m_pRigidBody->ClearTorque();
+}
+
 void RobotEnemy::Initialize(const SceneContext&)
 {
 	const auto pMat0 = MaterialManager::Get()->CreateMaterial<ColorMaterial_Shadow_Skinned>();

@@ -15,6 +15,8 @@ public:
 	void SetCharacter(Character* pCharacter) { m_pCharacter = pCharacter; };
 
 	void SetPositions(const XMFLOAT3& pos1, const XMFLOAT3& pos2);
+
+	void Reset();
 protected:
 	void Initialize(const SceneContext& sceneContext) override;
 	void Update(const SceneContext& sceneContext) override;

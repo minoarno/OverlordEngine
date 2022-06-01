@@ -28,7 +28,7 @@ void SpriteComponent::SetTexture(const std::wstring& spriteAsset)
 
 void SpriteComponent::Draw(const SceneContext& sceneContext)
 {
-	if (!m_pTexture)
+	if (!m_pTexture || !m_IsActive)
 		return;
 
 	TODO_W4(L"Draw the sprite with SpriteRenderer::Draw")

@@ -4,7 +4,7 @@ class Text;
 class Button : public GameObject
 {
 public:
-	Button(const std::wstring& imgPath, const std::function<void()>& func);
+	Button(const std::wstring& imgPathNormal, const std::wstring& imgPathActivated, const std::function<void()>& func);
 	~Button() override = default;
 
 	Button(const Button& other) = delete;
@@ -18,10 +18,12 @@ public:
 	void Select();
 	void Press(const SceneContext& sceneContext);
 	bool IsSelected()const { return m_IsSelected; }
+	bool IsHovering(const SceneContext& sceneContext);
 
 private:
 	bool m_IsSelected{ false };
-	SpriteComponent* m_pSpriteComponent{};
+	SpriteComponent* m_pSpriteComponentNormal{};
+	SpriteComponent* m_pSpriteComponentActivated{};
 	std::function<void()> m_Func;
 };
 

@@ -117,19 +117,19 @@ void Level1::Initialize()
 
 	//In Game Buttons
 	int index = 0;
-	m_pButtons.push_back(new Button(L"Textures/UI/MainMenuButton.png", [&]() { SceneManager::Get()->SetActiveGameScene(L"MainMenu"); }));
+	m_pButtons.push_back(new Button(L"Textures/UI/MainMenuButtonNormal.png", L"Textures/UI/MainMenuButtonActivated.png", [&]() { SceneManager::Get()->SetActiveGameScene(L"MainMenu"); }));
 	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 150, .5f);
 	m_pButtons[index]->SetActive(false);
 	AddChild(m_pButtons[index]);
 
 	index = 1;
-	m_pButtons.push_back(new Button(L"Textures/UI/RestartButton.png", [&]() { Reset(); }));
+	m_pButtons.push_back(new Button(L"Textures/UI/RestartButtonNormal.png", L"Textures/UI/RestartButtonActivated.png", [&]() { Reset(); }));
 	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 350, .5f);
 	m_pButtons[index]->SetActive(false);
 	AddChild(m_pButtons[index]);
 
 	index = 2;
-	m_pButtons.push_back(new Button(L"Textures/UI/ExitButton.png", [&]() { OverlordGame::Stop(); }));
+	m_pButtons.push_back(new Button(L"Textures/UI/ExitButtonNormal.png", L"Textures/UI/ExitButtonActivated.png", [&]() { OverlordGame::Stop(); }));
 	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 550, .5f);
 	m_pButtons[index]->SetActive(false);
 	AddChild(m_pButtons[index]);
@@ -198,6 +198,16 @@ void Level1::Update()
 				button->Press(m_SceneContext);
 			}
 		}
+
+		POINT mousePos = InputManager::GetMousePosition();
+		POINT prevMousePos = InputManager::GetMousePosition(true);
+		if (mousePos.x != prevMousePos.x || mousePos.y != prevMousePos.y)
+		{
+			for (Button* button : m_pButtons)
+			{
+				button->IsHovering(m_SceneContext);
+			}
+		}
 	}
 
 
@@ -230,6 +240,11 @@ void Level1::Reset()
 
 	//Enemies
 	m_pEnemies[0]->GetTransform()->Translate(0, 26, 0);
+
+	for (size_t i = 0; i < m_pEnemies.size(); i++)
+	{
+		m_pEnemies[i]->Reset();
+	}
 
 	//HUD
 	m_pHUD->SetAmountBolts(0);
