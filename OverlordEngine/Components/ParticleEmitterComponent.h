@@ -15,12 +15,16 @@ struct ParticleEmitterSettings
 	float minScale{ 1.f }; //The percentual minimum change in size/scale during the particle's lifetime
 	float maxScale{ 1.f }; //The percentual maximum change in size/scale during the particle's lifetime
 
+
+	bool useParticleEmitterVelocity{ true };
+	float speed{ 6.f };
 	XMFLOAT3 velocity{}; //The initial speed & (relative) direction of particles along X, Y and Z
 	XMFLOAT4 color{ XMFLOAT4{Colors::White } }; //The color of a particle
 };
 
 struct Particle
 {
+	XMFLOAT3 direction;
 	VertexParticle vertexInfo{};
 
 	bool isActive{ false };

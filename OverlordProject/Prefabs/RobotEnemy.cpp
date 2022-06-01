@@ -59,10 +59,11 @@ void RobotEnemy::Initialize(const SceneContext&)
 		pAnimator->Play();
 	}
 
-	const auto pDefaultMaterial = PxGetPhysics().createMaterial(1.0f, 1.0f, 0.5f);
+	const auto pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 1.f, 0.5f);
 	m_pRigidBody = AddComponent(new RigidBodyComponent());
 	m_pRigidBody->AddCollider(PxBoxGeometry{ 2.f,3.f,2.f }, *pDefaultMaterial);
 	m_pRigidBody->SetConstraint(RigidBodyConstraint::RotX | RigidBodyConstraint::RotZ, false);
+
 
 	ParticleEmitterSettings settings{};
 	settings.velocity = { 0.f,6.f,0.f };
@@ -70,12 +71,14 @@ void RobotEnemy::Initialize(const SceneContext&)
 	settings.maxSize = 2.f;
 	settings.minEnergy = 1.f;
 	settings.maxEnergy = 2.f;
-	settings.minScale = 3.5f;
-	settings.maxScale = 5.5f;
+	settings.minScale = 1.5f;
+	settings.maxScale = 3.5f;
 	settings.minEmitterRadius = .2f;
-	settings.maxEmitterRadius = .5f;
+	settings.maxEmitterRadius = .8f;
 	settings.color = { 1.f,1.f,1.f, .6f };
-	m_pEmitter = AddComponent(new ParticleEmitterComponent(L"Textures/Smoke.png", settings, 200));
+	settings.speed = 6.f;
+	settings.useParticleEmitterVelocity = false;
+	m_pEmitter = AddComponent(new ParticleEmitterComponent(L"Textures/Sparks.png", settings, 200));
 
 	//Tag
 	SetTag(L"Enemy");
@@ -83,7 +86,7 @@ void RobotEnemy::Initialize(const SceneContext&)
 
 void RobotEnemy::Update(const SceneContext& sceneContext)
 {
-
+	DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
 	if (m_pCharacter != nullptr && MathHelper::SquaredDistance(m_pCharacter->GetTransform()->GetPosition(), GetTransform()->GetPosition()) < m_SquaredTriggerDistance)
 	{
 		m_Target = m_pCharacter->GetTransform()->GetPosition();
@@ -93,7 +96,6 @@ void RobotEnemy::Update(const SceneContext& sceneContext)
 	else
 	{
 		m_pEyeMat->SetColor(DirectX::XMFLOAT4{ DirectX::Colors::Aquamarine });
-		DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
 		float sqDist = MathHelper::SquaredDistance(m_Target, pos);
 		if (sqDist < 100.f)
 		{
@@ -102,7 +104,9 @@ void RobotEnemy::Update(const SceneContext& sceneContext)
 	}
 
 	XMFLOAT3 dir{};
-	XMStoreFloat3(&dir, XMVectorSubtract(XMLoadFloat3(&m_Target), XMLoadFloat3(&GetTransform()->GetPosition())) * m_MoveSpeed * sceneContext.pGameTime->GetElapsed());
+	float speed = sceneContext.pGameTime->GetElapsed() * m_MoveSpeed;
+	XMStoreFloat3(&dir, XMVectorSubtract(XMLoadFloat3(&m_Target), XMLoadFloat3(&pos)) * speed);
+	dir.y = 0;
 
-	m_pRigidBody->AddForce(dir);
+	//m_pRigidBody->AddForce(dir,PxForceMode::eIMPULSE);
 }

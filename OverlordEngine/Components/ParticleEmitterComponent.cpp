@@ -170,8 +170,14 @@ void ParticleEmitterComponent::UpdateParticle(Particle& p, float elapsedTime) co
 		//a.vertexInfo.Position
 			//i.Add the velocity(m_EmitterSettings) multiplied by the elapsedTime, this way our
 			//particle moves in the direction of the velocity defined by the emitter settings.
-	DirectX::XMStoreFloat3(&p.vertexInfo.Position, DirectX::XMLoadFloat3(&p.vertexInfo.Position) + (DirectX::XMLoadFloat3(&m_EmitterSettings.velocity) * elapsedTime));
-
+	if (m_EmitterSettings.useParticleEmitterVelocity)
+	{
+		DirectX::XMStoreFloat3(&p.vertexInfo.Position, DirectX::XMLoadFloat3(&p.vertexInfo.Position) + (DirectX::XMLoadFloat3(&m_EmitterSettings.velocity) * elapsedTime));
+	}
+	else
+	{
+		DirectX::XMStoreFloat3(&p.vertexInfo.Position, DirectX::XMLoadFloat3(&p.vertexInfo.Position) + (DirectX::XMLoadFloat3(&p.direction) * elapsedTime));
+	}
 
 	//Create a local variable, called ‘lifePercent of type float, this is the percentual particle lifetime. This 
 	//value can be obtained by dividing the particle’s ‘currentEnergy’ by its ‘totalEnergy’.[At start :
@@ -245,6 +251,10 @@ void ParticleEmitterComponent::SpawnParticle(Particle& p)
 	//d.Everything is in place to calculate the initial position
 		//i.vertexInfo.Position = ‘our random direction’ * ‘our random distance’
 	XMStoreFloat3(&p.vertexInfo.Position, XMLoadFloat3(&GetTransform()->GetWorldPosition()) + randomDir * randomDistance);
+	if (!m_EmitterSettings.useParticleEmitterVelocity)
+	{
+		XMStoreFloat3(&p.direction, randomDir * m_EmitterSettings.speed);
+	}
 
 	//4. Size Initialization 
 	//a.Our vertexInfo.Size and initialSize are both equal to a random value that lays between MinSize and MaxSize(see EmitterSettings)

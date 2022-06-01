@@ -30,6 +30,6 @@ protected:
 
 	XMFLOAT3 m_Position1, m_Position2, m_Target;
 	float m_SquaredTriggerDistance{ 250 };
-	float m_MoveSpeed{ 20.f };
+	float m_MoveSpeed{ 10.f };
 };
 
