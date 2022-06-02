@@ -43,9 +43,10 @@ void RobotEnemy::GetHit()
 		m_pEmitter->GetGameObject()->SetActive(true);
 		m_EnemyAnimation = EnemyAnimation::GettingHit;
 		m_Health--;
-		if (m_Health >= 0)
+		if (m_Health <= 0)
 		{
-			m_EnemyAnimation = EnemyAnimation::GettingHit;
+			m_EnemyAnimation = EnemyAnimation::Dying;
+			m_IsAlive = false;
 		}
 
 		m_pAnimator->SetAnimation(m_EnemyAnimation);
@@ -111,7 +112,27 @@ void RobotEnemy::Update(const SceneContext& sceneContext)
 	constexpr float epsilon{ 0.01f }; //Constant that can be used to compare if a float is near zero
 	float elapsedTime = sceneContext.pGameTime->GetElapsed();
 
-	if (m_EnemyAnimation == EnemyAnimation::GettingHit)
+	if (!m_IsAlive)
+	{
+
+		return;
+	}
+
+	if (m_EnemyAnimation == EnemyAnimation::Dying)
+	{
+		m_Timer += elapsedTime;
+		if (m_Timer > m_DurationDying)
+		{
+			m_Timer = 0.f;
+			m_EnemyAnimation = EnemyAnimation::Running;
+			m_pAnimator->SetAnimation(m_EnemyAnimation);
+		}
+		else
+		{
+			return;
+		}
+	}
+	else if (m_EnemyAnimation == EnemyAnimation::GettingHit)
 	{
 		m_Timer += elapsedTime;
 		if (m_Timer > m_DurationHit)
@@ -131,21 +152,7 @@ void RobotEnemy::Update(const SceneContext& sceneContext)
 		if (m_Timer > m_DurationAttack)
 		{
 			m_Timer = 0.f;
-			m_EnemyAnimation = EnemyAnimation::Idle;
-			m_pAnimator->SetAnimation(m_EnemyAnimation);
-		}
-		else
-		{
-			return;
-		}
-	}
-	else if (m_EnemyAnimation == EnemyAnimation::Dying)
-	{
-		m_Timer += elapsedTime;
-		if (m_Timer > m_DurationDying)
-		{
-			m_Timer = 0.f;
-			m_EnemyAnimation = EnemyAnimation::Idle;
+			m_EnemyAnimation = EnemyAnimation::Running;
 			m_pAnimator->SetAnimation(m_EnemyAnimation);
 		}
 		else

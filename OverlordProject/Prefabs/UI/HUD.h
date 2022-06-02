@@ -16,7 +16,9 @@ public:
 
 	void SetAmountBolts(int amount);
 	void IncreaseBolts(int amount);
+	static HUD* Get() { return m_pHUD; };
 private:
+	static HUD* m_pHUD;
 	int m_AmountOfBoltsCollected{ 0 };
 	SpriteComponent* m_pNutBolt{nullptr};
 	Text* m_pBoltsText{nullptr};

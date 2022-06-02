@@ -19,5 +19,8 @@ private:
 	float m_Speed{ 50.f };
 	XMFLOAT3 m_Direction;
 	RigidBodyComponent* m_pRigid{ nullptr };
+	float m_Timer{ 0.f };
+	float m_Duration{ 5.f };
+	bool m_FlagForDelete{ false };
 };
 

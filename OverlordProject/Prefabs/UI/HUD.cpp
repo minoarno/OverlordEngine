@@ -20,6 +20,11 @@ void HUD::Initialize(const SceneContext&)
 	m_pNutBolt = go->AddComponent(new SpriteComponent{ L"Textures/NutBolt.png" });
 	go->GetTransform()->Translate(x - 45.f, 18.f, 0.f);
 	go->GetTransform()->Scale(.05f, .05f, 0.5f);
+
+	if (m_pHUD == nullptr)
+	{
+		m_pHUD = this;
+	}
 }
 
 void HUD::Draw(const SceneContext& sceneContext)
