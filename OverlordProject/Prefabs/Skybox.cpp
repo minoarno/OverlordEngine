@@ -10,7 +10,7 @@ Skybox::Skybox()
 
 void Skybox::Initialize(const SceneContext&)
 {
-	float scale{ 10.f };
+	float scale{ 1000.f };
 
 	const auto pMat0 = MaterialManager::Get()->CreateMaterial<SkyboxMaterial>();
 	pMat0->SetCubemapTexture(L"Textures/bkg1_bot.png");

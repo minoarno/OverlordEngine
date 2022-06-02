@@ -87,6 +87,8 @@ protected:
 	float m_DurationHit{ 0.5f };
 	float m_DurationDying{ 0.5f };
 
+	float m_TotalYaw{0.f};
+
 	int m_Health{ 3 };
 	int m_Damage{ 1 };
 

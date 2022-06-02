@@ -24,6 +24,7 @@ struct VS_OUTPUT {
 	float4 pos : SV_POSITION;
 	float3 normal : NORMAL;
 	float2 texCoord : TEXCOORD;
+	float4 lPos : TEXCOORD1;
 };
 
 DepthStencilState EnableDepth
@@ -40,7 +41,7 @@ RasterizerState NoCulling
 
 BlendState NoBlending
 {
-	BlendEnable[0] = FALSE;
+	BlendEnable[0] = TRUE;
 };
 
 //--------------------------------------------------------------------------------------
@@ -50,12 +51,13 @@ VS_OUTPUT VS(VS_INPUT input) {
 
 	VS_OUTPUT output;
 	// Step 1:	convert position into float4 and multiply with matWorldViewProj
-	output.pos = mul(float4(input.pos, 1.0f), gWorldViewProj).xyww;
+	output.pos = mul(float4(input.pos, 1.0f), gWorldViewProj);
 	// Step 2:	rotate the normal: NO TRANSLATION
 	//			this is achieved by clipping the 4x4 to a 3x3 matrix, 
 	//			thus removing the postion row of the matrix
 	output.normal = normalize(mul(input.normal, (float3x3)gWorld));
 	output.texCoord = input.texCoord;
+	//output.lpos = mul(float4(input.pos, 1.0f), gWorldViewProj).xyww;
 	return output;
 }
 

@@ -9,13 +9,6 @@
 
 #include "BoltPicksUp.h"
 
-#ifndef HALF_PI
-	#define HALF_PI M_PI / 2.0
-#endif
-#ifndef TWO_PI
-	#define TWO_PI M_PI * 2.0
-#endif
-
 RobotEnemy::RobotEnemy()
 	: m_Position1{ 0,0,0 }
 	, m_Position2{ 0,0,0 }
@@ -217,24 +210,31 @@ void RobotEnemy::Update(const SceneContext& sceneContext)
 
 	m_pController->Move(dir,epsilon);
 
-	auto forward = GetTransform()->GetForward();
-	float desiredAngle = atan2(dir.z, dir.x);
-	float currentAngle = atan2(forward.z, forward.x);
-	
-	float factor = desiredAngle - currentAngle;
-	if (factor > float(M_PI)) factor -= float(TWO_PI);
-	else if (factor < float(-M_PI)) factor += float(TWO_PI);
-	
-	auto rotation = GetTransform()->GetRotation().y;
-	
-	float slowRadius = float(HALF_PI);
-	if (factor <= slowRadius) 	
+	XMStoreFloat3(&dir, XMVector3Normalize(XMLoadFloat3(&dir)));
+
+	XMFLOAT3 forward{};
+	XMStoreFloat3(&forward, XMVector3Normalize(XMLoadFloat3(&GetTransform()->GetForward())));
+
+	float currentAngle = atan2(forward.x, forward.z);
+
+	float desiredAngle = atan2(dir.x, dir.z);
+
+	float look{desiredAngle - currentAngle };
+	look *= 180 / XM_PI;
+
+	if (look >= 180)
 	{
-		GetTransform()->Rotate(0, rotation + m_EnemyDesc.rotationSpeed * (factor / slowRadius), 0,false);
+		look -= 360;
 	}
-	else
+	else if(look <= 180)
 	{
-		GetTransform()->Rotate(0, rotation + factor , 0,false);
+		look += 360;
 	}
 
+	if (abs(look ) > 10.f)
+	{
+		m_TotalYaw += look * m_EnemyDesc.rotationSpeed * elapsedTime;
+
+		GetTransform()->Rotate(0, m_TotalYaw, 0, true);
+	}
 }

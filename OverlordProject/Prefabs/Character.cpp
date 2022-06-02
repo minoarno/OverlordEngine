@@ -6,6 +6,7 @@
 #include "Materials/Shadow/DiffuseMaterial_Shadow_Skinned.h"
 
 #include "Prefabs/Bullet.h"
+#include "Prefabs/Grenade.h"
 
 #include "UI/HUD.h"
 
@@ -337,9 +338,11 @@ void Character::ThrowGrenade()
 {
 	XMFLOAT3 forward{};
 	XMStoreFloat3(&forward, XMLoadFloat3(&GetTransform()->GetForward()) * -1);
-	forward.y += .5f;
+	forward.y += .1f;
+	XMStoreFloat3(&forward, XMVector3Normalize(XMLoadFloat3(&forward)));
+	XMStoreFloat3(&forward, XMLoadFloat3(&forward) * 5);
 	auto activeScene = SceneManager::Get()->GetActiveScene();
-	auto grenade = activeScene->AddChild(new Bullet{ forward},true);
+	Grenade* grenade = activeScene->AddChild(new Grenade{ forward },true);
 	grenade->SetTag(GetTag());
 	auto pos = GetTransform()->GetPosition();
 	XMFLOAT3 bulletPos{};

@@ -26,7 +26,7 @@ void Grenade::Initialize(const SceneContext&)
 	//Character Mesh
 	//**************
 	const auto visuals = AddChild(new GameObject);
-	const auto pModel = visuals->AddComponent(new ModelComponent(L"Meshes/Bullet.ovm"));
+	const auto pModel = visuals->AddComponent(new ModelComponent(L"Meshes/Grenade.ovm"));
 	pModel->SetMaterial(pMat);
 	visuals->GetTransform()->Scale(scale, scale, scale);
 
@@ -35,6 +35,7 @@ void Grenade::Initialize(const SceneContext&)
 		OnHit(pTriggerObject, pOtherObject, action);
 	};
 
+	m_pRigid->AddForce(m_Direction);
 }
 
 void Grenade::Update(const SceneContext& sceneContext)
@@ -52,7 +53,7 @@ void Grenade::Update(const SceneContext& sceneContext)
 	}
 	if (flagForDeletion)
 	{
-
+		SceneManager::Get()->GetActiveScene()->RemoveChild(this, true);
 	}
 }
 
@@ -70,7 +71,6 @@ void Grenade::OnHit(GameObject* pTriggerObject, GameObject* pOtherObject, PxTrig
 				pCharacter->GetHit(m_Damage);
 				return;
 			}
-			
 
 			RobotEnemy* pEnemy = dynamic_cast<RobotEnemy*>(pOtherObject);
 

@@ -10,6 +10,8 @@ public:
 	Grenade(Grenade&& other) noexcept = delete;
 	Grenade& operator=(const Grenade& other) = delete;
 	Grenade& operator=(Grenade&& other) noexcept = delete;
+
+	RigidBodyComponent* GetRigid()const { return m_pRigid; }
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;
