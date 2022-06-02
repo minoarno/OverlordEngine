@@ -290,8 +290,11 @@ void Character::Update(const SceneContext& sceneContext)
 			m_AnimationTimer += elapsedTime;
 			if (m_AnimationTimer > m_AnimationDuration)
 			{
+				if (m_CharacterState == CharacterAnimation::Slashing) m_SwingingAxe = false;
+
 				m_pAnimator->SetAnimation(CharacterAnimation::Idle);
 				m_CharacterState = CharacterAnimation::Idle;
+				
 			}
 		}
 		
@@ -365,6 +368,7 @@ void Character::Shoot()
 
 void Character::SlapAxe()
 {
+	m_SwingingAxe = false;
 }
 
 void Character::DrawImGui()
@@ -437,4 +441,5 @@ void Character::Reset()
 	m_pAnimator->Play();
 
 	m_DyingAnimationIsDone = false;
+	m_SwingingAxe = false;
 }

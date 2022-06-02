@@ -65,6 +65,7 @@ public:
 
 	int GetHealth() { return m_Health; }
 	bool GetIsDyingAnimationDone()const { return m_DyingAnimationIsDone; }
+	bool GetIsSwingingAxe()const { return m_SwingingAxe; }
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;
@@ -87,6 +88,8 @@ private:
 
 	XMFLOAT3 m_TotalVelocity{0,0,0};					//TotalVelocity with X/Z for Horizontal Movement AND Y for Vertical Movement (fall/jump)
 	XMFLOAT3 m_CurrentDirection{0,0,0};					//Current/Last Direction based on Camera forward/right (Stored for deacceleration)
+
+	bool m_SwingingAxe{ false };
 
 	//Visuals
 	GameObject* m_pVisuals;

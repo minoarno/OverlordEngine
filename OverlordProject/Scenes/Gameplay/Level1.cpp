@@ -7,6 +7,7 @@
 
 //Prefabs
 #include "Prefabs/RobotEnemy.h"
+#include "Prefabs/Crate.h"
 #include "Prefabs/Character.h"
 #include "Prefabs/Skybox.h"
 
@@ -51,22 +52,21 @@ void Level1::Initialize()
 	characterDesc.actionId_MoveRight = CharacterMoveRight;
 	characterDesc.actionId_Jump = CharacterJump;
 
-	float levelScale{ 4.f };
-
 	m_pCharacter = AddChild(new Character(characterDesc));
-	m_pCharacter->GetTransform()->Translate(20.f, 10.f, -20.f);
+	m_CharacterSpawn = { 1.2f, 3.6f, 131.f };
+	m_pCharacter->GetTransform()->Translate(m_CharacterSpawn);
 	m_pCharacter->GetTransform()->Rotate(0.f, 180.f, 0.f);
 
 	//Ground
-	levelScale = 10.f;
+	float levelScale{ 1.f };
 	GameObject* pLevelObject = AddChild(new GameObject());
-	ModelComponent* pLevelMesh = pLevelObject->AddComponent(new ModelComponent(L"Meshes/Ground2.ovm"));
+	ModelComponent* pLevelMesh = pLevelObject->AddComponent(new ModelComponent(L"Meshes/Level1.ovm"));
 	DiffuseMaterial_Shadow* matGround = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow>();
 	matGround->SetDiffuseTexture(L"Textures/GroundDirt.png");
 	pLevelMesh->SetMaterial(matGround);
 
 	RigidBodyComponent* pLevelActor = pLevelObject->AddComponent(new RigidBodyComponent(true));
-	PxTriangleMesh* pPxTriangleMesh = ContentManager::Load<PxTriangleMesh>(L"Meshes/Ground2.ovpt");
+	PxTriangleMesh* pPxTriangleMesh = ContentManager::Load<PxTriangleMesh>(L"Meshes/Level1.ovpt");
 	pLevelActor->AddCollider(PxTriangleMeshGeometry(pPxTriangleMesh, PxMeshScale({ levelScale,levelScale,levelScale })), *pDefaultMaterial);
 	pLevelObject->GetTransform()->Scale(levelScale, levelScale, levelScale);
 	pLevelObject->GetTransform()->Rotate(90.f, 0.f, 0.f);
@@ -122,22 +122,23 @@ void Level1::Initialize()
 	AddChild(m_pButtons[index]);
 
 	//Enemies
-	m_PositionsEnemy.push_back(std::make_pair(XMFLOAT3{ 0,9.8f,0 }, XMFLOAT3{ 20,9.8f,0 }));
+	m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 0,9.8f,0 }, XMFLOAT3{ 20,9.8f,0 }));
+
+
+	//Crates
+	m_PositionsCrate.emplace_back(XMFLOAT3{ 1.2f, 3.6f, 120.f });
+	m_PositionsCrate.emplace_back(XMFLOAT3{ 1.2f, 3.6f, 130.f });
 
 	//Audio
-	auto pFmodSystem = SoundManager::Get()->GetSystem();
-
-	//Channel group
-	auto fmodResult = pFmodSystem->createChannelGroup("Sound Effects", &m_pSoundEffectGroup);
+	auto fmodResult = SoundManager::Get()->GetSystem()->createChannelGroup("Sound Effects", &m_pSoundEffectGroup);
 	SoundManager::Get()->ErrorCheck(fmodResult);
 
-	//Background music
 	m_MusicVolume = 0.f;
 
-	pFmodSystem->createStream("Resources/Audio/ReadyToFight.mp3", FMOD_DEFAULT, nullptr, &m_pBackgroundSoundFx);
+	SoundManager::Get()->GetSystem()->createStream("Resources/Audio/ReadyToFight.mp3", FMOD_DEFAULT, nullptr, &m_pBackgroundSoundFx);
 	SoundManager::Get()->ErrorCheck(fmodResult);
 
-	pFmodSystem->playSound(m_pBackgroundSoundFx, m_pSoundEffectGroup, false, nullptr);
+	SoundManager::Get()->GetSystem()->playSound(m_pBackgroundSoundFx, m_pSoundEffectGroup, false, nullptr);
 	m_pSoundEffectGroup->setVolume(m_MusicVolume);
 
 	AddChild(new Skybox{});
@@ -207,6 +208,27 @@ void Level1::Update()
 			m_pEnemies[i] = nullptr;
 		}
 	}
+
+	if (m_pCharacter != nullptr || m_pCharacter->GetIsSwingingAxe())
+	{
+		for (size_t i = 0; i < m_pCrates.size(); i++)
+		{
+			if (m_pCrates[i] != nullptr)
+			{
+				m_pCrates[i]->AttemptToBreak(m_pCharacter);
+			}
+		}
+	}
+
+	//Clean up crates
+	for (size_t i = 0; i < m_pCrates.size(); i++)
+	{
+		if (m_pCrates[i] != nullptr && m_pCrates[i]->GetFlagToDelete())
+		{
+			RemoveChild(m_pCrates[i], true);
+			m_pCrates[i] = nullptr;
+		}
+	}
 }
 
 void Level1::Draw()
@@ -231,13 +253,17 @@ void Level1::Reset()
 	}
 
 	//Character
-	m_pCharacter->GetTransform()->Translate(18.f, 9.8f, -20.f);
+	m_pCharacter->GetTransform()->Translate(m_CharacterSpawn);
 	m_pCharacter->GetTransform()->Rotate(0.f, 180.f, 0.f);
 	m_pCharacter->Reset();
 
 	//Enemies
 	RemoveEnemies();
 	SpawnEnemies();
+
+	//Crates
+	RemoveCrates();
+	SpawnCrates();
 
 	//HUD
 	HUD::Get()->SetAmountBolts(0);
@@ -271,4 +297,25 @@ void Level1::RemoveEnemies()
 		}
 	}
 	m_pEnemies.clear();
+}
+
+void Level1::SpawnCrates()
+{
+	for (size_t i = 0; i < m_PositionsEnemy.size(); i++)
+	{
+		m_pCrates.emplace_back(AddChild(new Crate{}));
+		m_pCrates[i]->GetTransform()->Translate(m_PositionsCrate[i]);
+	}
+}
+
+void Level1::RemoveCrates()
+{
+	for (size_t i = 0; i < m_pCrates.size(); i++)
+	{
+		if (m_pCrates[i] != nullptr)
+		{
+			RemoveChild(m_pCrates[i], true);
+		}
+	}
+	m_pCrates.clear();
 }

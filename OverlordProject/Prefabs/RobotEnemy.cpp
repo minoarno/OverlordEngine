@@ -14,6 +14,7 @@ RobotEnemy::RobotEnemy()
 	, m_Position2{ 0,0,0 }
 	, m_Target{ 0,0,0 }
 	, m_EnemyDesc{ PxGetPhysics().createMaterial(0.5f, .0f, 0.5f)}
+	, m_MusicVolume{ 0.3f }
 {
 }
 
@@ -32,6 +33,9 @@ void RobotEnemy::GetHit(int damage)
 {
 	if (m_Timer == 0.f)
 	{
+		SoundManager::Get()->GetSystem()->playSound(m_pBackgroundSoundFx, m_pSoundEffectGroup, false, nullptr);
+		m_pSoundEffectGroup->setVolume(m_MusicVolume);
+
 		m_pEmitter->GetGameObject()->SetActive(true);
 		m_EnemyAnimation = EnemyAnimation::GettingHit;
 		m_Health -= damage;
@@ -98,6 +102,13 @@ void RobotEnemy::Initialize(const SceneContext&)
 	auto pEmitter = AddChild(new GameObject());
 	m_pEmitter = pEmitter->AddComponent(new ParticleEmitterComponent(L"Textures/Sparks.png", settings, 200));
 	pEmitter->SetActive(false);
+
+	//auto
+	auto fmodResult = SoundManager::Get()->GetSystem()->createChannelGroup("Sound Effects", &m_pSoundEffectGroup);
+	SoundManager::Get()->ErrorCheck(fmodResult);
+
+	SoundManager::Get()->GetSystem()->createStream("Resources/Audio/ReadyToFight.mp3", FMOD_DEFAULT, nullptr, &m_pBackgroundSoundFx);
+	SoundManager::Get()->ErrorCheck(fmodResult);
 
 	//Tag
 	SetTag(L"Enemy");

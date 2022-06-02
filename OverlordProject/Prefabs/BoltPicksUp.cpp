@@ -24,7 +24,7 @@ void BoltPicksUp::Initialize(const SceneContext&)
 	//Character Mesh
 	//**************
 	const auto visuals = AddChild(new GameObject);
-	const auto pModel = visuals->AddComponent(new ModelComponent(L"Meshes/Bolt.ovm"));
+	const auto pModel = visuals->AddComponent(new ModelComponent(L"Meshes/Nut.ovm"));
 	pModel->SetMaterial(pMat);
 	visuals->GetTransform()->Scale(scale, scale, scale);
 

@@ -93,6 +93,7 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Prefabs\Crate.cpp" />
     <ClCompile Include="Prefabs\BoltPicksUp.cpp" />
     <ClCompile Include="Prefabs\Grenade.cpp" />
     <ClCompile Include="Prefabs\Bullet.cpp" />
@@ -159,6 +160,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Prefabs\Crate.h" />
     <ClInclude Include="Prefabs\BoltPicksUp.h" />
     <ClInclude Include="Prefabs\Grenade.h" />
     <ClInclude Include="Prefabs\Bullet.h" />

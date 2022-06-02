@@ -1,6 +1,7 @@
 #pragma once
 class HUD;
 
+class Crate;
 class Button;
 class PostBloom;
 class Character;
@@ -30,10 +31,15 @@ protected:
 private:
 	//Character
 	Character* m_pCharacter{nullptr};
+	XMFLOAT3 m_CharacterSpawn{};
 
 	//Enemies
 	std::vector<RobotEnemy*> m_pEnemies;
 	std::vector<std::pair<XMFLOAT3, XMFLOAT3>> m_PositionsEnemy;
+
+	//Crates
+	std::vector<Crate*> m_pCrates;
+	std::vector<XMFLOAT3> m_PositionsCrate;
 
 	//HUD and UI
 	std::vector<Button*> m_pButtons;
@@ -48,5 +54,8 @@ private:
 
 	void RemoveEnemies();
 	void SpawnEnemies();
+
+	void RemoveCrates();
+	void SpawnCrates();
 };
 

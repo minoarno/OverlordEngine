@@ -70,11 +70,14 @@ protected:
 	
 	Character* m_pCharacter{ nullptr };
 
+	//Animation
 	EnemyAnimation m_EnemyAnimation{ EnemyAnimation::Running };
 	ModelAnimator* m_pAnimator{ nullptr };
 
+	//Effects
 	ParticleEmitterComponent* m_pEmitter{ nullptr };
 
+	//Movement
 	XMFLOAT3 m_Position1, m_Position2, m_Target;
 	float m_SquaredTriggerDistance{ 300 };
 	float m_SquaredDestinationDistance{ 10 };
@@ -89,9 +92,16 @@ protected:
 
 	float m_TotalYaw{0.f};
 
+	//Damage
 	int m_Health{ 3 };
 	int m_Damage{ 1 };
 
+	//Deletion
 	bool m_FlagForDelete{ false };
+
+	//Audio
+	FMOD::Sound* m_pBackgroundSoundFx;
+	FMOD::ChannelGroup* m_pSoundEffectGroup;
+	float m_MusicVolume{};
 };
 
