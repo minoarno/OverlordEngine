@@ -152,6 +152,11 @@ void Level1::Initialize()
 
 void Level1::Update()
 {
+	if (m_pCharacter->GetIsDyingAnimationDone())
+	{
+
+	}
+
 	if (m_SceneContext.pGameTime->IsRunning())
 	{
 		if (m_SceneContext.pInput->IsActionTriggered(Settings))
@@ -228,6 +233,7 @@ void Level1::Reset()
 	//Character
 	m_pCharacter->GetTransform()->Translate(18.f, 9.8f, -20.f);
 	m_pCharacter->GetTransform()->Rotate(0.f, 180.f, 0.f);
+	m_pCharacter->Reset();
 
 	//Enemies
 	RemoveEnemies();

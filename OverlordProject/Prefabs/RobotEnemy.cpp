@@ -6,8 +6,6 @@
 #include "Prefabs/Character.h"
 
 #include "Materials/ColorMaterial.h"
-#define _USE_MATH_DEFINES
-#include <math.h>
 
 #include "BoltPicksUp.h"
 
@@ -37,13 +35,13 @@ void RobotEnemy::Reset()
 {
 }
 
-void RobotEnemy::GetHit()
+void RobotEnemy::GetHit(int damage)
 {
 	if (m_Timer == 0.f)
 	{
 		m_pEmitter->GetGameObject()->SetActive(true);
 		m_EnemyAnimation = EnemyAnimation::GettingHit;
-		m_Health--;
+		m_Health -= damage;
 		if (m_Health <= 0)
 		{
 			m_EnemyAnimation = EnemyAnimation::Dying;
@@ -142,8 +140,9 @@ void RobotEnemy::Update(const SceneContext& sceneContext)
 		if (m_Timer > m_DurationHit)
 		{
 			m_Timer = 0.f;
-			m_EnemyAnimation = EnemyAnimation::Idle;
+			m_EnemyAnimation = EnemyAnimation::Running;
 			m_pAnimator->SetAnimation(m_EnemyAnimation);
+			m_pEmitter->Reset();
 			m_pEmitter->GetGameObject()->SetActive(false);
 		}
 		else
@@ -174,12 +173,13 @@ void RobotEnemy::Update(const SceneContext& sceneContext)
 		
 		m_pEyeMat->SetColor(DirectX::XMFLOAT4{ DirectX::Colors::Red });
 		float sqDist = MathHelper::SquaredDistance(m_pCharacter->GetTransform()->GetPosition(), pos);
-		if (sqDist < 10.f)
+		if (sqDist < m_SquaredDestinationDistance)
 		{
 			if (m_Timer < epsilon)
 			{
 				m_EnemyAnimation = EnemyAnimation::Slashing;
-				m_pCharacter->GetHit();
+				m_pAnimator->SetAnimation(m_EnemyAnimation);
+				m_pCharacter->GetHit(m_Damage);
 			}
 
 			m_Timer += elapsedTime;
@@ -215,26 +215,26 @@ void RobotEnemy::Update(const SceneContext& sceneContext)
 		}
 	}
 
-	m_pController->Move(dir);
+	m_pController->Move(dir,epsilon);
 
-	//auto forward = GetTransform()->GetForward();
-	//float desiredAngle = atan2(dir.x, dir.z);
-	//float currentAngle = atan2(forward.x, forward.z);
-	//
-	//float factor = desiredAngle - currentAngle;
-	//if (factor > float(M_PI)) factor -= float(TWO_PI);
-	//else if (factor < float(-M_PI)) factor += float(TWO_PI);
-	//
-	//auto rotation = GetTransform()->GetRotation().y;
-	//
-	//float slowRadius = float(HALF_PI);
-	//if (factor <= slowRadius) 	
-	//{
-	//	GetTransform()->Rotate(0, rotation + m_EnemyDesc.rotationSpeed * (factor / slowRadius), 0);
-	//}
-	//else
-	//{
-	//	GetTransform()->Rotate(0, rotation + (factor * 180 / float(M_PI)), 0);
-	//}
+	auto forward = GetTransform()->GetForward();
+	float desiredAngle = atan2(dir.z, dir.x);
+	float currentAngle = atan2(forward.z, forward.x);
+	
+	float factor = desiredAngle - currentAngle;
+	if (factor > float(M_PI)) factor -= float(TWO_PI);
+	else if (factor < float(-M_PI)) factor += float(TWO_PI);
+	
+	auto rotation = GetTransform()->GetRotation().y;
+	
+	float slowRadius = float(HALF_PI);
+	if (factor <= slowRadius) 	
+	{
+		GetTransform()->Rotate(0, rotation + m_EnemyDesc.rotationSpeed * (factor / slowRadius), 0,false);
+	}
+	else
+	{
+		GetTransform()->Rotate(0, rotation + factor , 0,false);
+	}
 
 }

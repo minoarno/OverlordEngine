@@ -7,6 +7,8 @@
 
 #include "Prefabs/Bullet.h"
 
+#include "UI/HUD.h"
+
 Character::Character(const CharacterDesc& characterDesc)
 	: m_CharacterDesc{ characterDesc }
 	, m_MoveAcceleration(characterDesc.maxMoveSpeed / characterDesc.moveAccelerationTime)
@@ -69,6 +71,18 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 void Character::Update(const SceneContext& sceneContext)
 {
 	if (!sceneContext.pGameTime->IsRunning())return;
+
+	if (m_CharacterState == CharacterAnimation::Dying)
+	{
+		m_AnimationTimer += sceneContext.pGameTime->GetElapsed();
+		if (m_AnimationTimer > m_AnimationDuration)
+		{
+			m_pAnimator->Pause();
+			m_DyingAnimationIsDone = true;
+		}
+		return;
+	}
+
 
 	if (m_pCameraComponent->IsActive())
 	{
@@ -233,7 +247,7 @@ void Character::Update(const SceneContext& sceneContext)
 		
 		DirectX::XMFLOAT3 displacementFloat3;
 		DirectX::XMStoreFloat3(&displacementFloat3, DirectX::XMLoadFloat3(&m_TotalVelocity)* sceneContext.pGameTime->GetElapsed());
-		m_pControllerComponent->Move(displacementFloat3);
+		m_pControllerComponent->Move(displacementFloat3, epsilon);
 
 		if (m_CharacterState != CharacterAnimation::Throwing && m_CharacterState != CharacterAnimation::Slashing && m_CharacterState != CharacterAnimation::Shooting)
 		{
@@ -321,8 +335,9 @@ void Character::Update(const SceneContext& sceneContext)
 
 void Character::ThrowGrenade()
 {
-	auto forward = GetTransform()->GetForward();
-	forward.y += 5.f;
+	XMFLOAT3 forward{};
+	XMStoreFloat3(&forward, XMLoadFloat3(&GetTransform()->GetForward()) * -1);
+	forward.y += .5f;
 	auto activeScene = SceneManager::Get()->GetActiveScene();
 	auto grenade = activeScene->AddChild(new Bullet{ forward},true);
 	grenade->SetTag(GetTag());
@@ -389,6 +404,34 @@ void Character::DrawImGui()
 	}
 }
 
-void Character::GetHit()
+void Character::GetHit(int damage)
 {
+	if (m_CharacterState != CharacterAnimation::Dying)
+	{
+		m_Health -= damage;
+		HUD::Get()->SetAmountOfHearts(m_Health);
+
+		if (m_Health <= 0)
+		{
+			m_CharacterState = CharacterAnimation::Dying;
+			m_pAnimator->SetAnimation(m_CharacterState);
+			m_AnimationTimer = 0;
+			m_AnimationDuration = m_DyingAnimatioonDuration;
+		}
+	}
+}
+
+void Character::Reset()
+{
+	m_TotalPitch = 0.f;
+	m_TotalYaw = 0.f;
+	m_Health = m_MaxHealth;
+	HUD::Get()->SetAmountOfHearts(m_Health);
+
+	m_CharacterState = CharacterAnimation::Idle;
+	m_AnimationTimer = 0;
+	m_pAnimator->SetAnimation(m_CharacterState);
+	m_pAnimator->Play();
+
+	m_DyingAnimationIsDone = false;
 }

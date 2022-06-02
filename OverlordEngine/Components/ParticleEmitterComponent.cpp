@@ -335,3 +335,11 @@ void ParticleEmitterComponent::DrawImGui()
 		ImGui::ColorEdit4("Color", &m_EmitterSettings.color.x, ImGuiColorEditFlags_NoInputs);
 	}
 }
+
+void ParticleEmitterComponent::Reset()
+{
+	for (size_t i = 0; i < m_ParticleCount; i++)
+	{
+		m_ParticlesArray[i].isActive = false;
+	}
+}

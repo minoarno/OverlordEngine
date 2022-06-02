@@ -14,6 +14,8 @@ public:
 	void Initialize(const SceneContext&) override;
 	void Draw(const SceneContext&) override;
 
+	void SetAmountOfHearts(int amount);
+
 	void SetAmountBolts(int amount);
 	void IncreaseBolts(int amount);
 	static HUD* Get() { return m_pHUD; };
@@ -23,5 +25,8 @@ private:
 	SpriteComponent* m_pNutBolt{nullptr};
 	Text* m_pBoltsText{nullptr};
 	void UpdateBoltsText();
+
+	int m_AmountOfHearts{ 3 };
+	std::vector<GameObject*> m_pHearts{};
 };
 

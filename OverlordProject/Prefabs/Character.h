@@ -57,9 +57,14 @@ public:
 
 	void DrawImGui();
 
-	void GetHit();
+	void GetHit(int damage);
+
+	void Reset();
 
 	std::wstring GetTag()const override { return L"Friendly"; };
+
+	int GetHealth() { return m_Health; }
+	bool GetIsDyingAnimationDone()const { return m_DyingAnimationIsDone; }
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;
@@ -90,12 +95,15 @@ private:
 	int m_AnimationClipId{ 0 };
 	float m_AnimationSpeed{ 1.f };
 
-	//char** m_ClipNames{};
-	//UINT m_ClipCount{};
-
 	CharacterAnimation m_CharacterState{ CharacterAnimation::Idle };
 
 	float m_AnimationDuration{ 1.f };
 	float m_AnimationTimer{ 0.f };
+	float m_DyingAnimatioonDuration{ 2.5f };
+
+	bool m_DyingAnimationIsDone{ false };
+
+	int m_Health{ 3 };
+	int m_MaxHealth{ 3 };
 };
 

@@ -23,6 +23,15 @@ void HUD::Initialize(const SceneContext&)
 	go->GetTransform()->Translate(x - 45.f, 18.f, 0.f);
 	go->GetTransform()->Scale(.05f, .05f, 0.5f);
 
+	//Hearts
+	for (size_t i = 0; i < m_AmountOfHearts; i++)
+	{
+		m_pHearts.emplace_back(AddChild(new GameObject{}));
+		m_pNutBolt = m_pHearts[i]->AddComponent(new SpriteComponent{L"Textures/Heart.png"});
+		m_pHearts[i]->GetTransform()->Translate(45.f + 50 * i, 18.f, 0.f);
+		m_pHearts[i]->GetTransform()->Scale(.05f, .05f, 0.5f);
+	}
+
 	if (m_pHUD == nullptr)
 	{
 		m_pHUD = this;
@@ -32,6 +41,16 @@ void HUD::Initialize(const SceneContext&)
 void HUD::Draw(const SceneContext& sceneContext)
 {
 	m_pBoltsText->Draw(sceneContext);
+}
+
+void HUD::SetAmountOfHearts(int amount)
+{
+	m_AmountOfHearts = amount;
+
+	for (size_t i = 0; i < m_pHearts.size(); i++)
+	{
+		m_pHearts[i]->SetActive(m_AmountOfHearts > i);
+	}
 }
 
 void HUD::SetAmountBolts(int amount)

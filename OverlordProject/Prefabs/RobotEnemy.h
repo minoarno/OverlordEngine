@@ -21,7 +21,7 @@ struct EnemyDesc
 
 	PxCapsuleControllerDesc controller{};
 
-	float rotationSpeed{ 120.f };
+	float rotationSpeed{ 30.f };
 };
 
 
@@ -54,7 +54,7 @@ public:
 
 	void Reset();
 
-	void GetHit();
+	void GetHit(int damage);
 
 	std::wstring GetTag()const override { return L"Enemy"; };
 	bool GetFlagToDelete()const;
@@ -76,7 +76,8 @@ protected:
 	ParticleEmitterComponent* m_pEmitter{ nullptr };
 
 	XMFLOAT3 m_Position1, m_Position2, m_Target;
-	float m_SquaredTriggerDistance{ 250 };
+	float m_SquaredTriggerDistance{ 300 };
+	float m_SquaredDestinationDistance{ 10 };
 	float m_MoveSpeed{ 1.f };
 	float m_FallSpeed{ 15.f };
 
@@ -87,6 +88,7 @@ protected:
 	float m_DurationDying{ 0.5f };
 
 	int m_Health{ 3 };
+	int m_Damage{ 1 };
 
 	bool m_FlagForDelete{ false };
 };

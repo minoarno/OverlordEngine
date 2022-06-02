@@ -22,5 +22,7 @@ private:
 	float m_Timer{ 0.f };
 	float m_Duration{ 5.f };
 	bool m_FlagForDelete{ false };
+
+	int m_Damage{ 1 };
 };
 

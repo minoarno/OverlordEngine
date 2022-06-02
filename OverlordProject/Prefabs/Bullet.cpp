@@ -72,7 +72,7 @@ void Bullet::OnHit(GameObject* pTriggerObject, GameObject* pOtherObject, PxTrigg
 
 				if (pCharacter != nullptr)
 				{
-					pCharacter->GetHit();
+					pCharacter->GetHit(m_Damage);
 					m_FlagForDelete = true;
 					return;
 				}
@@ -83,7 +83,7 @@ void Bullet::OnHit(GameObject* pTriggerObject, GameObject* pOtherObject, PxTrigg
 			{
 				if (pEnemy != nullptr)
 				{
-					pEnemy->GetHit();
+					pEnemy->GetHit(m_Damage);
 					m_FlagForDelete = true;
 					return;
 				}

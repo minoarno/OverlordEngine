@@ -1,4 +1,6 @@
 #pragma once
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 namespace MathHelper
 {
@@ -56,5 +58,41 @@ namespace MathHelper
 
 		if (value < lo)
 			value = lo;
+	}
+
+	//https://stackoverflow.com/questions/12435671/quaternion-lookat-function
+	// just in case you need that function also
+	inline XMFLOAT4 CreateFromAxisAngle(const XMFLOAT3& axis, float angle)
+	{
+		float halfAngle = angle * .5f;
+		float s = float{ sin(halfAngle) };
+		XMFLOAT4 q;
+		q.x = axis.x * s;
+		q.y = axis.y * s;
+		q.z = axis.z * s;
+		q.w = float{ cos(halfAngle) };
+		return q;
+	}
+
+	inline XMFLOAT4 LookAt(const XMFLOAT3& sourcePoint, const XMFLOAT3& destPoint)
+	{
+		float epsilon{ 0.000001f };
+		XMVECTOR forwardVector = XMVector3Normalize(XMVectorSubtract(XMLoadFloat3(&destPoint), XMLoadFloat3(&sourcePoint)));
+
+		float dot = XMVector3Dot({0,0,1}, forwardVector).m128_f32[0];
+
+		if (abs(dot - (-1.0f)) < epsilon)
+		{
+			return XMFLOAT4(0, 1, 0, float{M_PI});
+		}
+		if (abs(dot - (1.0f)) < epsilon)
+		{
+			return XMFLOAT4{0,0,0,1};
+		}
+
+		float rotAngle = float{ acos(dot) };
+		XMFLOAT3 rotAxis{};
+		XMStoreFloat3(&rotAxis, XMVector3Normalize(XMVector3Cross({ 0,0,1 }, forwardVector)));
+		return CreateFromAxisAngle(rotAxis, rotAngle);
 	}
 }
