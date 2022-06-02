@@ -43,6 +43,8 @@ private:
 
 	//HUD and UI
 	std::vector<Button*> m_pButtons;
+	GameObject* m_pVictoryScreen{ nullptr };
+	GameObject* m_pLostScreen{ nullptr };
 
 	//Audio
 	FMOD::Sound* m_pBackgroundSoundFx;

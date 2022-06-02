@@ -105,7 +105,7 @@ void Level1::Initialize()
 	//In Game Buttons
 	int index = 0;
 	m_pButtons.push_back(new Button(L"Textures/UI/MainMenuButtonNormal.png", L"Textures/UI/MainMenuButtonActivated.png", [&]() { SceneManager::Get()->SetActiveGameScene(L"MainMenu"); }));
-	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 150, .5f);
+	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 200, .5f);
 	m_pButtons[index]->SetActive(false);
 	AddChild(m_pButtons[index]);
 
@@ -117,17 +117,33 @@ void Level1::Initialize()
 
 	index = 2;
 	m_pButtons.push_back(new Button(L"Textures/UI/ExitButtonNormal.png", L"Textures/UI/ExitButtonActivated.png", [&]() { OverlordGame::Stop(); }));
-	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 550, .5f);
+	m_pButtons[index]->GetTransform()->Translate(m_SceneContext.windowWidth * .35f, 500, .5f);
 	m_pButtons[index]->SetActive(false);
 	AddChild(m_pButtons[index]);
 
+	//Win and lose
+	m_pVictoryScreen = new GameObject();
+	m_pVictoryScreen->AddComponent(new SpriteComponent(L"Textures/VictoryScreen.png", DirectX::XMFLOAT2(0.5f, 0.5f), DirectX::XMFLOAT4(1, 1, 1, 0.5f)));
+	m_pVictoryScreen->GetTransform()->Translate(m_SceneContext.windowWidth * .5f, m_SceneContext.windowHeight * .5f, .9f);
+	m_pVictoryScreen->GetTransform()->Scale(1.f, 1.f, 1.f);
+	AddChild(m_pVictoryScreen);
+
+	m_pLostScreen = new GameObject();
+	m_pLostScreen->AddComponent(new SpriteComponent(L"Textures/LostScreen.png", DirectX::XMFLOAT2(0.5f, 0.5f), DirectX::XMFLOAT4(1, 1, 1, 0.5f)));
+	m_pLostScreen->GetTransform()->Translate(m_SceneContext.windowWidth * .5f, m_SceneContext.windowHeight * .5f, .9f);
+	m_pLostScreen->GetTransform()->Scale(1.f, 1.f, 1.f);
+	AddChild(m_pLostScreen);
+
+	m_pVictoryScreen->SetActive(false);
+	m_pLostScreen->SetActive(false);
+	
 	//Enemies
-	m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 0,9.8f,0 }, XMFLOAT3{ 20,9.8f,0 }));
+	//m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 64.f,3.6f,74.f }, XMFLOAT3{ 43.6f,3.6f,52.2f }));
 
 
 	//Crates
-	m_PositionsCrate.emplace_back(XMFLOAT3{ 1.2f, 3.6f, 120.f });
-	m_PositionsCrate.emplace_back(XMFLOAT3{ 1.2f, 3.6f, 130.f });
+	m_PositionsCrate.emplace_back(XMFLOAT3{ 15.f, 3.6f, 100.f });
+	m_PositionsCrate.emplace_back(XMFLOAT3{ -18.f, 3.6f, 100.f });
 
 	//Audio
 	auto fmodResult = SoundManager::Get()->GetSystem()->createChannelGroup("Sound Effects", &m_pSoundEffectGroup);
@@ -155,7 +171,22 @@ void Level1::Update()
 {
 	if (m_pCharacter->GetIsDyingAnimationDone())
 	{
+		m_pPostBloom->SetIsEnabled(true);
+		m_pLostScreen->SetActive(true);
 
+		m_SceneContext.pGameTime->Stop();
+		for (Button* button : m_pButtons)
+		{
+			button->SetActive(true);
+		}
+
+		if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
+		{
+			for (Button* button : m_pButtons)
+			{
+				button->Press(m_SceneContext);
+			}
+		}
 	}
 
 	if (m_SceneContext.pGameTime->IsRunning())
@@ -209,7 +240,8 @@ void Level1::Update()
 		}
 	}
 
-	if (m_pCharacter != nullptr || m_pCharacter->GetIsSwingingAxe())
+	//Attempt to break crates
+	if (m_pCharacter != nullptr && m_pCharacter->GetIsSwingingAxe())
 	{
 		for (size_t i = 0; i < m_pCrates.size(); i++)
 		{
@@ -247,6 +279,8 @@ void Level1::OnSceneActivated()
 
 void Level1::Reset()
 {
+	m_pPostBloom->SetIsEnabled(true);
+
 	for (Button* button : m_pButtons)
 	{
 		button->SetActive(false);
@@ -274,6 +308,9 @@ void Level1::Reset()
 	m_pSoundEffectGroup->setVolume(m_MusicVolume);
 
 	m_SceneContext.pGameTime->Start();
+
+	m_pVictoryScreen->SetActive(false);
+	m_pLostScreen->SetActive(false);
 }
 
 void Level1::SpawnEnemies()
@@ -301,7 +338,7 @@ void Level1::RemoveEnemies()
 
 void Level1::SpawnCrates()
 {
-	for (size_t i = 0; i < m_PositionsEnemy.size(); i++)
+	for (size_t i = 0; i < m_PositionsCrate.size(); i++)
 	{
 		m_pCrates.emplace_back(AddChild(new Crate{}));
 		m_pCrates[i]->GetTransform()->Translate(m_PositionsCrate[i]);

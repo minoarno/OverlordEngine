@@ -361,7 +361,7 @@ void Character::Shoot()
 	auto bullet = activeScene->AddChild(new Bullet{ forward},true);
 	bullet->SetTag(GetTag());
 	auto pos = GetTransform()->GetPosition();
-	XMFLOAT3 bulletPos{};
+ 	XMFLOAT3 bulletPos{};
 	XMStoreFloat3(&bulletPos, XMVectorAdd(XMLoadFloat3(&pos), XMLoadFloat3(&forward) * m_CharacterDesc.controller.radius * 1.2f));
 	bullet->GetTransform()->Translate(bulletPos);
 }
