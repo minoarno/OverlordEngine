@@ -38,14 +38,14 @@ void RobotEnemy::Reset()
 
 void RobotEnemy::GetHit()
 {
-	if (m_TimerHit == 0.f)
+	if (m_Timer == 0.f)
 	{
 		m_pEmitter->GetGameObject()->SetActive(true);
 		m_EnemyAnimation = EnemyAnimation::GettingHit;
 		m_Health--;
 		if (m_Health >= 0)
 		{
-			m_EnemyAnimation = EnemyAnimation::Dying;
+			m_EnemyAnimation = EnemyAnimation::GettingHit;
 		}
 
 		m_pAnimator->SetAnimation(m_EnemyAnimation);
@@ -80,7 +80,7 @@ void RobotEnemy::Initialize(const SceneContext&)
 	m_pVisuals->GetTransform()->Translate(0, -3.f, 0);
 
 	m_pAnimator = pModel->GetAnimator();
-	m_pAnimator->SetAnimation(EnemyAnimation::Dying);
+	m_pAnimator->SetAnimation(EnemyAnimation::Running);
 	m_pAnimator->Play();
 	
 
@@ -102,8 +102,6 @@ void RobotEnemy::Initialize(const SceneContext&)
 	m_pEmitter = pEmitter->AddComponent(new ParticleEmitterComponent(L"Textures/Sparks.png", settings, 200));
 	pEmitter->SetActive(false);
 
-	m_pController->GetPxController()->getActor()->userData = this;
-
 	//Tag
 	SetTag(L"Enemy");
 }
@@ -115,14 +113,47 @@ void RobotEnemy::Update(const SceneContext& sceneContext)
 
 	if (m_EnemyAnimation == EnemyAnimation::GettingHit)
 	{
-		m_TimerHit += elapsedTime;
-		if (m_TimerHit > m_DurationHit)
+		m_Timer += elapsedTime;
+		if (m_Timer > m_DurationHit)
 		{
-			m_TimerHit = 0.f;
-			m_EnemyAnimation = EnemyAnimation::Running;
+			m_Timer = 0.f;
+			m_EnemyAnimation = EnemyAnimation::Idle;
 			m_pAnimator->SetAnimation(m_EnemyAnimation);
 		}
+		else
+		{
+			return;
+		}
 	}
+	else if (m_EnemyAnimation == EnemyAnimation::Slashing)
+	{
+		m_Timer += elapsedTime;
+		if (m_Timer > m_DurationAttack)
+		{
+			m_Timer = 0.f;
+			m_EnemyAnimation = EnemyAnimation::Idle;
+			m_pAnimator->SetAnimation(m_EnemyAnimation);
+		}
+		else
+		{
+			return;
+		}
+	}
+	else if (m_EnemyAnimation == EnemyAnimation::Dying)
+	{
+		m_Timer += elapsedTime;
+		if (m_Timer > m_DurationDying)
+		{
+			m_Timer = 0.f;
+			m_EnemyAnimation = EnemyAnimation::Idle;
+			m_pAnimator->SetAnimation(m_EnemyAnimation);
+		}
+		else
+		{
+			return;
+		}
+	}
+
 
 	DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
 	if (m_pCharacter != nullptr && MathHelper::SquaredDistance(m_pCharacter->GetTransform()->GetPosition(), GetTransform()->GetPosition()) < m_SquaredTriggerDistance)
@@ -130,18 +161,19 @@ void RobotEnemy::Update(const SceneContext& sceneContext)
 		m_Target = m_pCharacter->GetTransform()->GetPosition();
 		
 		m_pEyeMat->SetColor(DirectX::XMFLOAT4{ DirectX::Colors::Red });
-		float sqDist = MathHelper::SquaredDistance(m_Target, pos);
+		float sqDist = MathHelper::SquaredDistance(m_pCharacter->GetTransform()->GetPosition(), pos);
 		if (sqDist < 10.f)
 		{
-			if (m_TimerAttack < epsilon)
+			if (m_Timer < epsilon)
 			{
+				m_EnemyAnimation = EnemyAnimation::Slashing;
 				m_pCharacter->GetHit();
 			}
 
-			m_TimerAttack += elapsedTime;
-			if (m_TimerAttack > m_DurationAttack)
+			m_Timer += elapsedTime;
+			if (m_Timer > m_DurationAttack)
 			{
-				m_TimerAttack = 0.f;
+				m_Timer = 0.f;
 			}
 		}
 	}

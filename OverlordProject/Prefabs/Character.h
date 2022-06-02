@@ -59,6 +59,7 @@ public:
 
 	void GetHit();
 
+	std::wstring GetTag()const override { return L"Friendly"; };
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;

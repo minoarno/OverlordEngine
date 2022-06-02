@@ -20,6 +20,7 @@ void ControllerComponent::Initialize(const SceneContext& /*sceneContext*/)
 		auto controllerManager = m_pGameObject->GetScene()->GetPhysxProxy()->GetControllerManager();
 		m_pController = controllerManager->createController(m_ControllerDesc);
 		ASSERT_NULL_(m_pController);
+		m_pController->setUserData(this);
 		m_pController->getActor()->userData = this;
 		SetCollisionGroup(CollisionGroup(m_CollisionGroups.word0));
 		SetCollisionIgnoreGroup(CollisionGroup(m_CollisionGroups.word1));

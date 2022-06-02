@@ -38,7 +38,7 @@ public:
 	void RemoveComponent(BaseComponent* pComponent, bool deleteObject = false);
 	void OnTrigger(GameObject* pTriggerObject, GameObject* pOtherObject, PxTriggerAction action) const;
 
-	const std::wstring& GetTag() const { return m_Tag; }
+	virtual std::wstring GetTag() const;
 	void SetTag(const std::wstring& tag) { m_Tag = tag; }
 
 	void SetActive(bool value) { m_IsActive = value; };

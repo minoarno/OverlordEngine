@@ -324,6 +324,11 @@ void GameObject::OnTrigger(GameObject* pTriggerObject, GameObject* pOtherObject,
 		m_OnTriggerCallback(pTriggerObject, pOtherObject, action);
 }
 
+std::wstring GameObject::GetTag() const
+{
+	return m_Tag;
+}
+
 GameScene* GameObject::GetScene() const
 {
 	if(!m_pParentScene && m_pParentObject)

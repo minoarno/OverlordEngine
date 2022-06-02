@@ -32,15 +32,16 @@ class RobotEnemy : public GameObject
 public:
 	enum EnemyAnimation : uint8_t
 	{
-		Dying = 0,
-		Running = 1,
+		Running = 0,
+		Idle = 1,
 		Shooting = 2,
 		Slashing = 3,
-		GettingHit = 4
+		GettingHit = 4,
+		Dying = 5
 	};
 
 	RobotEnemy();
-	~RobotEnemy() override = default;
+	virtual ~RobotEnemy() override = default;
 
 	RobotEnemy(const RobotEnemy& other) = delete;
 	RobotEnemy(RobotEnemy&& other) noexcept = delete;
@@ -54,6 +55,8 @@ public:
 	void Reset();
 
 	void GetHit();
+
+	std::wstring GetTag()const override { return L"Enemy"; };
 protected:
 	void Initialize(const SceneContext& sceneContext) override;
 	void Update(const SceneContext& sceneContext) override;
@@ -76,12 +79,13 @@ protected:
 	float m_MoveSpeed{ 1.f };
 	float m_FallSpeed{ 15.f };
 
-	float m_TimerAttack{ 0.f };
+	float m_Timer{ 0.f };
+	
 	float m_DurationAttack{ 1.f };
-
-	float m_TimerHit{ 0.f };
 	float m_DurationHit{ 0.5f };
+	float m_DurationDying{ 0.5f };
 
 	int m_Health{ 3 };
+	bool m_IsAlive{ true };
 };
 
