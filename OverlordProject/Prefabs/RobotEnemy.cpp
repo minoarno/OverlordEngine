@@ -107,7 +107,7 @@ void RobotEnemy::Initialize(const SceneContext&)
 	auto fmodResult = SoundManager::Get()->GetSystem()->createChannelGroup("Sound Effects", &m_pSoundEffectGroup);
 	SoundManager::Get()->ErrorCheck(fmodResult);
 
-	SoundManager::Get()->GetSystem()->createStream("Resources/Audio/ReadyToFight.mp3", FMOD_DEFAULT, nullptr, &m_pBackgroundSoundFx);
+	SoundManager::Get()->GetSystem()->createStream("Resources/Audio/clink.wav", FMOD_DEFAULT, nullptr, &m_pBackgroundSoundFx);
 	SoundManager::Get()->ErrorCheck(fmodResult);
 
 	//Tag

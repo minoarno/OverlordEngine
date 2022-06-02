@@ -66,6 +66,8 @@ public:
 	int GetHealth() { return m_Health; }
 	bool GetIsDyingAnimationDone()const { return m_DyingAnimationIsDone; }
 	bool GetIsSwingingAxe()const { return m_SwingingAxe; }
+	bool DidIWin()const { return m_DidIWin; }
+	void SetDidIWin(bool value) { m_DidIWin = value; }
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;
@@ -105,6 +107,7 @@ private:
 	float m_DyingAnimatioonDuration{ 2.5f };
 
 	bool m_DyingAnimationIsDone{ false };
+	bool m_DidIWin{ false };
 
 	int m_Health{ 3 };
 	int m_MaxHealth{ 3 };

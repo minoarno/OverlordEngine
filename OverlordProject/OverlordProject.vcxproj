@@ -153,6 +153,7 @@
     </ClCompile>
     <ClCompile Include="Scenes\Week 4\UberMaterialScene.cpp" />
     <ClCompile Include="Prefabs\UI\Text.cpp" />
+    <ClCompile Include="Prefabs\WinBolt.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OverlordEngine\OverlordEngine.vcxproj">
@@ -207,6 +208,7 @@
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Scenes\Week 4\UberMaterialScene.h" />
     <ClInclude Include="Prefabs\UI\Text.h" />
+    <ClInclude Include="Prefabs\WinBolt.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

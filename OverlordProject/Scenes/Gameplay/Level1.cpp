@@ -10,6 +10,7 @@
 #include "Prefabs/Crate.h"
 #include "Prefabs/Character.h"
 #include "Prefabs/Skybox.h"
+#include "Prefabs/WinBolt.h"
 
 //UI
 #include "Prefabs/UI/HUD.h"
@@ -35,14 +36,17 @@ Level1::~Level1()
 
 void Level1::Initialize()
 {
-	m_SceneContext.settings.enableOnGUI = true;
+	m_SceneContext.settings.enableOnGUI = false;
+	m_SceneContext.settings.drawPhysXDebug = false;
+	m_SceneContext.settings.drawGrid = false;
+	m_SceneContext.settings.showInfoOverlay = false;
 
 	const auto pGroundMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow>(); //Shadow variant
 	pGroundMaterial->SetDiffuseTexture(L"Textures/GroundDirt.png");
 
 	//Ground Plane
 	const auto pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
-	GameSceneExt::CreatePhysXGroundPlane(*this, pDefaultMaterial);
+	//GameSceneExt::CreatePhysXGroundPlane(*this, pDefaultMaterial);
 
 	//Character
 	CharacterDesc characterDesc{ pDefaultMaterial };
@@ -139,11 +143,20 @@ void Level1::Initialize()
 	
 	//Enemies
 	//m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 64.f,3.6f,74.f }, XMFLOAT3{ 43.6f,3.6f,52.2f }));
+	//m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 50.f,3.6f,-21.5f }, XMFLOAT3{ 63.f,3.6f, -33.5f }));
+	//m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 97.5f,-42.f,-34.f }, XMFLOAT3{ 85.f, -42.f, -27.f }));
+	//m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 121.f,-42.f,-24.f }, XMFLOAT3{ 120.f, -42.f, -38.f }));
 
 
 	//Crates
 	m_PositionsCrate.emplace_back(XMFLOAT3{ 15.f, 3.6f, 100.f });
 	m_PositionsCrate.emplace_back(XMFLOAT3{ -18.f, 3.6f, 100.f });
+	m_PositionsCrate.emplace_back(XMFLOAT3{ 52.f, 3.6f, 0.5f });
+	m_PositionsCrate.emplace_back(XMFLOAT3{ 105.f, -42.f, -40.f });
+
+	//Winbolt
+	auto winbolt = AddChild(new WinBolt{});
+	winbolt->GetTransform()->Translate(214.6f, -104.F, -30.f);
 
 	//Audio
 	auto fmodResult = SoundManager::Get()->GetSystem()->createChannelGroup("Sound Effects", &m_pSoundEffectGroup);
@@ -169,6 +182,26 @@ void Level1::Initialize()
 
 void Level1::Update()
 {
+	if (m_pCharacter->DidIWin())
+	{
+		m_pPostBloom->SetIsEnabled(false);
+		m_pVictoryScreen->SetActive(true);
+
+		m_SceneContext.pGameTime->Stop();
+		for (Button* button : m_pButtons)
+		{
+			button->SetActive(true);
+		}
+
+		if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
+		{
+			for (Button* button : m_pButtons)
+			{
+				button->Press(m_SceneContext);
+			}
+		}
+	}
+
 	if (m_pCharacter->GetIsDyingAnimationDone())
 	{
 		m_pPostBloom->SetIsEnabled(true);

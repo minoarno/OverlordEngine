@@ -49,6 +49,7 @@
     <ClCompile Include="Prefabs\Grenade.cpp" />
     <ClCompile Include="Prefabs\BoltPicksUp.cpp" />
     <ClCompile Include="Prefabs\Crate.cpp" />
+    <ClCompile Include="Prefabs\WinBolt.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -98,5 +99,6 @@
     <ClInclude Include="Prefabs\Grenade.h" />
     <ClInclude Include="Prefabs\BoltPicksUp.h" />
     <ClInclude Include="Prefabs\Crate.h" />
+    <ClInclude Include="Prefabs\WinBolt.h" />
   </ItemGroup>
 </Project>

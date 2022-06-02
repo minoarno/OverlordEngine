@@ -73,17 +73,17 @@ void Character::Update(const SceneContext& sceneContext)
 {
 	if (!sceneContext.pGameTime->IsRunning())return;
 
-	if (m_CharacterState == CharacterAnimation::Dying)
+	if (m_CharacterState == CharacterAnimation::Dying || GetTransform()->GetPosition().y < -120)
 	{
 		m_AnimationTimer += sceneContext.pGameTime->GetElapsed();
 		if (m_AnimationTimer > m_AnimationDuration)
 		{
 			m_pAnimator->Pause();
 			m_DyingAnimationIsDone = true;
+
 		}
 		return;
 	}
-
 
 	if (m_pCameraComponent->IsActive())
 	{
@@ -368,7 +368,7 @@ void Character::Shoot()
 
 void Character::SlapAxe()
 {
-	m_SwingingAxe = false;
+	m_SwingingAxe = true;
 }
 
 void Character::DrawImGui()
@@ -430,6 +430,7 @@ void Character::GetHit(int damage)
 
 void Character::Reset()
 {
+	m_TotalVelocity = XMFLOAT3{};
 	m_TotalPitch = 0.f;
 	m_TotalYaw = 0.f;
 	m_Health = m_MaxHealth;

@@ -21,6 +21,6 @@ protected:
 private:
 	bool m_FlagForDelete{ false };
 	bool m_HasSpawnedReward{ false };
-	float m_BreakDistanceSquared{ 36.f };
+	float m_BreakDistanceSquared{ 64.f };
 };
 
