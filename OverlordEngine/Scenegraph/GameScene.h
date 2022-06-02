@@ -18,9 +18,16 @@ public:
 
 	template<typename T>
 	std::enable_if_t<std::is_base_of_v<GameObject, T>, T*>
-		AddChild(T* pObject)
+		AddChild(T* pObject,bool delayCreation = false)
 	{
-		AddChild_(pObject);
+		if (!delayCreation)
+		{
+			AddChild_(pObject);
+		}
+		else
+		{
+			m_pToBeIntializedObjects.emplace_back(pObject);
+		}
 		return pObject;
 	}
 	void AddChild_(GameObject* pObject);
@@ -62,8 +69,10 @@ private:
 	void RootOnSceneDeactivated();
 	void RootOnGUI();
 	void RootWindowStateChanged(int state, bool active) const;
+	void AddToBeIntializedObjects();
 
 	std::vector<GameObject*> m_pChildren{};
+	std::vector<GameObject*> m_pToBeIntializedObjects{};
 	bool m_IsInitialized{};
 	std::wstring m_SceneName{};
 	CameraComponent* m_pDefaultCamera{}, * m_pActiveCamera{};

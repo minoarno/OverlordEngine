@@ -45,6 +45,8 @@
     <ClCompile Include="Prefabs\Skybox.cpp" />
     <ClCompile Include="Materials\SkyboxMaterial.cpp" />
     <ClCompile Include="Materials\Post\PostBloom.cpp" />
+    <ClCompile Include="Prefabs\Bullet.cpp" />
+    <ClCompile Include="Grenade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -90,5 +92,7 @@
     <ClInclude Include="Prefabs\Skybox.h" />
     <ClInclude Include="Materials\SkyboxMaterial.h" />
     <ClInclude Include="Materials\Post\PostBloom.h" />
+    <ClInclude Include="Prefabs\Bullet.h" />
+    <ClInclude Include="Grenade.h" />
   </ItemGroup>
 </Project>

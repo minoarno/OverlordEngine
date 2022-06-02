@@ -57,9 +57,15 @@ public:
 
 	void DrawImGui();
 
+	void GetHit();
+
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;
+
+	void ThrowGrenade();
+	void Shoot();
+	void SlapAxe();
 private:
 	CameraComponent* m_pCameraComponent{};
 	float m_MinPitch{};
@@ -83,8 +89,8 @@ private:
 	int m_AnimationClipId{ 0 };
 	float m_AnimationSpeed{ 1.f };
 
-	char** m_ClipNames{};
-	UINT m_ClipCount{};
+	//char** m_ClipNames{};
+	//UINT m_ClipCount{};
 
 	CharacterAnimation m_CharacterState{ CharacterAnimation::Idle };
 

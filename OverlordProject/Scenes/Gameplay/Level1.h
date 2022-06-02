@@ -33,6 +33,7 @@ private:
 
 	//Enemies
 	std::vector<RobotEnemy*> m_pEnemies;
+	std::vector<std::pair<XMFLOAT3, XMFLOAT3>> m_PositionsEnemy;
 
 	//HUD and UI
 	std::vector<Button*> m_pButtons;

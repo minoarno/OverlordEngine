@@ -55,7 +55,8 @@ void Level1::Initialize()
 	float levelScale{ 4.f };
 
 	m_pCharacter = AddChild(new Character(characterDesc));
-	m_pCharacter->GetTransform()->Translate(0.f, 10.f * levelScale, -10.f);
+	m_pCharacter->GetTransform()->Translate(20.f, 10.f, -20.f);
+	m_pCharacter->GetTransform()->Rotate(0.f, 180.f, 0.f);
 
 	//Ground
 	levelScale = 10.f;
@@ -70,20 +71,6 @@ void Level1::Initialize()
 	pLevelActor->AddCollider(PxTriangleMeshGeometry(pPxTriangleMesh, PxMeshScale({ levelScale,levelScale,levelScale })), *pDefaultMaterial);
 	pLevelObject->GetTransform()->Scale(levelScale, levelScale, levelScale);
 	pLevelObject->GetTransform()->Rotate(90.f, 0.f, 0.f);
-
-
-	//pLevelObject = AddChild(new GameObject());
-	//pLevelMesh = pLevelObject->AddComponent(new ModelComponent(L"Meshes/Ground2.ovm"));
-	//matGround = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow>();
-	//matGround->SetDiffuseTexture(L"Textures/GroundDirt.png");
-	//pLevelMesh->SetMaterial(matGround);
-	//
-	//pLevelActor = pLevelObject->AddComponent(new RigidBodyComponent(true));
-	//pPxTriangleMesh = ContentManager::Load<PxTriangleMesh>(L"Meshes/Ground2.ovpt");
-	//pLevelActor->AddCollider(PxTriangleMeshGeometry(pPxTriangleMesh, PxMeshScale({ levelScale,levelScale,levelScale })), *pDefaultMaterial);
-	//pLevelActor->Translate(XMFLOAT3{ 0,30, 100 });
-	//pLevelObject->GetTransform()->Scale(levelScale, levelScale, levelScale);
-	//pLevelObject->GetTransform()->Rotate(90.f, 0.f, 0.f);
 
 	//Input
 	InputAction inputAction = InputAction(CharacterMoveLeft, InputState::down, 'Q');
@@ -136,10 +123,12 @@ void Level1::Initialize()
 	AddChild(m_pButtons[index]);
 
 	//Enemies
+	m_PositionsEnemy.push_back(std::make_pair(XMFLOAT3{ 0,9.8f,0 }, XMFLOAT3{ 20,9.8f,0 }));
+
 	index = 0;
 	m_pEnemies.emplace_back(AddChild(new RobotEnemy{}));
-	m_pEnemies[index]->GetTransform()->Translate(0, .2, 0);
-	m_pEnemies[index]->SetPositions(XMFLOAT3{ 20,.2,0 }, XMFLOAT3{ 0,.2,0 });
+	m_pEnemies[index]->GetTransform()->Translate(m_PositionsEnemy[index].first);
+	m_pEnemies[index]->SetPositions(m_PositionsEnemy[index].first, m_PositionsEnemy[index].second);
 	m_pEnemies[index]->SetCharacter(m_pCharacter);
 
 	//Audio
@@ -236,14 +225,13 @@ void Level1::Reset()
 	}
 
 	//Character
-	m_pCharacter->GetTransform()->Translate(0.f, 30.f, -10.f);
-	m_pCharacter->GetTransform()->Rotate(0.f, 0.f, 0.f);
+	m_pCharacter->GetTransform()->Translate(18.f, 9.8f, -20.f);
+	m_pCharacter->GetTransform()->Rotate(0.f, 180.f, 0.f);
 
 	//Enemies
-	m_pEnemies[0]->GetTransform()->Translate(0, .2, 0);
-
 	for (size_t i = 0; i < m_pEnemies.size(); i++)
 	{
+		m_pEnemies[i]->GetTransform()->Translate(m_PositionsEnemy[i].first);
 		m_pEnemies[i]->Reset();
 	}
 

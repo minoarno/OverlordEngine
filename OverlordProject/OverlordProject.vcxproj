@@ -93,6 +93,8 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Grenade.cpp" />
+    <ClCompile Include="Prefabs\Bullet.cpp" />
     <ClCompile Include="Materials\Shadow\ColorMaterial_Shadow_Skinned.cpp" />
     <ClCompile Include="Materials\Post\PostBloom.cpp" />
     <ClCompile Include="Prefabs\UI\HUD.cpp" />
@@ -156,6 +158,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Grenade.h" />
+    <ClInclude Include="Prefabs\Bullet.h" />
     <ClInclude Include="Materials\Shadow\ColorMaterial_Shadow_Skinned.h" />
     <ClInclude Include="Materials\Post\PostBloom.h" />
     <ClInclude Include="Prefabs\UI\HUD.h" />

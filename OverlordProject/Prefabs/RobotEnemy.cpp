@@ -6,11 +6,22 @@
 #include "Prefabs/Character.h"
 
 #include "Materials/ColorMaterial.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+
+#ifndef HALF_PI
+	#define HALF_PI M_PI / 2.0
+#endif
+#ifndef TWO_PI
+	#define TWO_PI M_PI * 2.0
+#endif
 
 RobotEnemy::RobotEnemy()
 	: m_Position1{ 0,0,0 }
 	, m_Position2{ 0,0,0 }
 	, m_Target{ 0,0,0 }
+	, m_EnemyDesc{ PxGetPhysics().createMaterial(0.5f, .0f, 0.5f)}
 {
 }
 
@@ -18,12 +29,27 @@ void RobotEnemy::SetPositions(const XMFLOAT3& pos1, const XMFLOAT3& pos2)
 {
 	m_Position1 = pos1;
 	m_Position2 = pos2;
+	m_Target = m_Position1;
 }
 
 void RobotEnemy::Reset()
 {
-	m_pRigidBody->ClearForce();
-	m_pRigidBody->ClearTorque();
+}
+
+void RobotEnemy::GetHit()
+{
+	if (m_TimerHit == 0.f)
+	{
+		m_pEmitter->GetGameObject()->SetActive(true);
+		m_EnemyAnimation = EnemyAnimation::GettingHit;
+		m_Health--;
+		if (m_Health >= 0)
+		{
+			m_EnemyAnimation = EnemyAnimation::Dying;
+		}
+
+		m_pAnimator->SetAnimation(m_EnemyAnimation);
+	}
 }
 
 void RobotEnemy::Initialize(const SceneContext&)
@@ -53,20 +79,14 @@ void RobotEnemy::Initialize(const SceneContext&)
 	m_pVisuals->GetTransform()->Scale(scale, scale, scale);
 	m_pVisuals->GetTransform()->Translate(0, -3.f, 0);
 
-	if (const auto pAnimator = pModel->GetAnimator())
-	{
-		pAnimator->SetAnimation(1);
-		pAnimator->Play();
-	}
+	m_pAnimator = pModel->GetAnimator();
+	m_pAnimator->SetAnimation(EnemyAnimation::Dying);
+	m_pAnimator->Play();
+	
 
-	const auto pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 1.f, 0.5f);
-	m_pRigidBody = AddComponent(new RigidBodyComponent());
-	m_pRigidBody->AddCollider(PxBoxGeometry{ 2.f,3.f,2.f }, *pDefaultMaterial);
-	m_pRigidBody->SetConstraint(RigidBodyConstraint::RotX | RigidBodyConstraint::RotZ, false);
-
+	m_pController = AddComponent(new ControllerComponent(m_EnemyDesc.controller));
 
 	ParticleEmitterSettings settings{};
-	settings.velocity = { 0.f,6.f,0.f };
 	settings.minSize = 1.f;
 	settings.maxSize = 2.f;
 	settings.minEnergy = 1.f;
@@ -78,7 +98,11 @@ void RobotEnemy::Initialize(const SceneContext&)
 	settings.color = { 1.f,1.f,1.f, .6f };
 	settings.speed = 6.f;
 	settings.useParticleEmitterVelocity = false;
-	m_pEmitter = AddComponent(new ParticleEmitterComponent(L"Textures/Sparks.png", settings, 200));
+	auto pEmitter = AddChild(new GameObject());
+	m_pEmitter = pEmitter->AddComponent(new ParticleEmitterComponent(L"Textures/Sparks.png", settings, 200));
+	pEmitter->SetActive(false);
+
+	m_pController->GetPxController()->getActor()->userData = this;
 
 	//Tag
 	SetTag(L"Enemy");
@@ -86,27 +110,87 @@ void RobotEnemy::Initialize(const SceneContext&)
 
 void RobotEnemy::Update(const SceneContext& sceneContext)
 {
+	constexpr float epsilon{ 0.01f }; //Constant that can be used to compare if a float is near zero
+	float elapsedTime = sceneContext.pGameTime->GetElapsed();
+
+	if (m_EnemyAnimation == EnemyAnimation::GettingHit)
+	{
+		m_TimerHit += elapsedTime;
+		if (m_TimerHit > m_DurationHit)
+		{
+			m_TimerHit = 0.f;
+			m_EnemyAnimation = EnemyAnimation::Running;
+			m_pAnimator->SetAnimation(m_EnemyAnimation);
+		}
+	}
+
 	DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
 	if (m_pCharacter != nullptr && MathHelper::SquaredDistance(m_pCharacter->GetTransform()->GetPosition(), GetTransform()->GetPosition()) < m_SquaredTriggerDistance)
 	{
 		m_Target = m_pCharacter->GetTransform()->GetPosition();
 		
 		m_pEyeMat->SetColor(DirectX::XMFLOAT4{ DirectX::Colors::Red });
+		float sqDist = MathHelper::SquaredDistance(m_Target, pos);
+		if (sqDist < 10.f)
+		{
+			if (m_TimerAttack < epsilon)
+			{
+				m_pCharacter->GetHit();
+			}
+
+			m_TimerAttack += elapsedTime;
+			if (m_TimerAttack > m_DurationAttack)
+			{
+				m_TimerAttack = 0.f;
+			}
+		}
 	}
 	else
 	{
 		m_pEyeMat->SetColor(DirectX::XMFLOAT4{ DirectX::Colors::Aquamarine });
 		float sqDist = MathHelper::SquaredDistance(m_Target, pos);
-		if (sqDist < 100.f)
+		if (sqDist < 10.f)
 		{
-			m_Target = (MathHelper::XMFloat3Equals(m_Target, m_Position1)) ? m_Position2 : m_Position2;
+			m_Target = (MathHelper::XMFloat3Equals(m_Target, m_Position1)) ? m_Position2 : m_Position1;
+		}
+	}
+	XMFLOAT3 dir{};
+	float speed = elapsedTime * m_MoveSpeed;
+	XMStoreFloat3(&dir, XMVectorSubtract(XMLoadFloat3(&m_Target), XMLoadFloat3(&pos)) * speed);
+
+	if (m_pController->GetCollisionFlags().isSet(PxControllerCollisionFlag::eCOLLISION_DOWN))
+	{
+		dir.y = epsilon;
+	}
+	else
+	{
+		dir.y -= m_FallSpeed * elapsedTime;
+		if (dir.y < -m_EnemyDesc.maxFallSpeed)
+		{
+			dir.y = -m_EnemyDesc.maxFallSpeed;
 		}
 	}
 
-	XMFLOAT3 dir{};
-	float speed = sceneContext.pGameTime->GetElapsed() * m_MoveSpeed;
-	XMStoreFloat3(&dir, XMVectorSubtract(XMLoadFloat3(&m_Target), XMLoadFloat3(&pos)) * speed);
-	dir.y = 0;
+	m_pController->Move(dir);
 
-	//m_pRigidBody->AddForce(dir,PxForceMode::eIMPULSE);
+	//auto forward = GetTransform()->GetForward();
+	//float desiredAngle = atan2(dir.x, dir.z);
+	//float currentAngle = atan2(forward.x, forward.z);
+	//
+	//float factor = desiredAngle - currentAngle;
+	//if (factor > float(M_PI)) factor -= float(TWO_PI);
+	//else if (factor < float(-M_PI)) factor += float(TWO_PI);
+	//
+	//auto rotation = GetTransform()->GetRotation().y;
+	//
+	//float slowRadius = float(HALF_PI);
+	//if (factor <= slowRadius) 	
+	//{
+	//	GetTransform()->Rotate(0, rotation + m_EnemyDesc.rotationSpeed * (factor / slowRadius), 0);
+	//}
+	//else
+	//{
+	//	GetTransform()->Rotate(0, rotation + (factor * 180 / float(M_PI)), 0);
+	//}
+
 }

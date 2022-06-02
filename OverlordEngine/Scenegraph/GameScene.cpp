@@ -18,6 +18,14 @@ GameScene::~GameScene()
 	}
 
 	SafeDelete(m_pPhysxProxy);
+
+	if (m_pToBeIntializedObjects.size() > 0)
+	{
+		for (auto pChild : m_pToBeIntializedObjects)
+		{
+			SafeDelete(pChild);
+		}
+	}
 }
 
 void GameScene::AddChild_(GameObject* pObject)
@@ -147,6 +155,8 @@ void GameScene::RootUpdate()
 	}
 
 	m_pPhysxProxy->Update(m_SceneContext);
+
+	AddToBeIntializedObjects();
 }
 
 void GameScene::RootDraw()
@@ -370,6 +380,15 @@ void GameScene::RootWindowStateChanged(int state, bool active) const
 		if (active)m_SceneContext.pGameTime->Start();
 		else m_SceneContext.pGameTime->Stop();
 	}
+}
+
+void GameScene::AddToBeIntializedObjects()
+{
+	for (size_t i = 0; i < m_pToBeIntializedObjects.size(); i++)
+	{
+		AddChild(m_pToBeIntializedObjects[i]);
+	}
+	m_pToBeIntializedObjects.clear();
 }
 
 void GameScene::AddPostProcessingEffect(PostProcessingMaterial* pMaterial)

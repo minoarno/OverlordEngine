@@ -3,8 +3,9 @@
 #include "PhysX/PhysxProxy.h"
 #include "Scenegraph/GameScene.h"
 
-
 #include "Materials/Shadow/DiffuseMaterial_Shadow_Skinned.h"
+
+#include "Prefabs/Bullet.h"
 
 Character::Character(const CharacterDesc& characterDesc)
 	: m_CharacterDesc{ characterDesc }
@@ -15,11 +16,6 @@ Character::Character(const CharacterDesc& characterDesc)
 
 Character::~Character()
 {
-	for (size_t i = 0; i < m_ClipCount; i++)
-	{
-		SafeDelete(m_ClipNames[i]);
-	}
-	SafeDelete(m_ClipNames);
 }
 
 void Character::Initialize(const SceneContext& /*sceneContext*/)
@@ -55,7 +51,7 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	pModel->SetMaterial(pMaterial1, 1);
 	pModel->SetMaterial(pMaterial2, 2);
 	pModel->SetMaterial(pMaterial3, 3);
-	pModel->GetTransform()->Rotate(0, 0, 0);
+	//pModel->GetTransform()->Rotate(0, 0, 0);
 
 	float scale = 0.01f;
 	m_pVisuals->GetTransform()->Scale(scale, scale, scale);
@@ -291,6 +287,7 @@ void Character::Update(const SceneContext& sceneContext)
 				m_pAnimator->SetAnimation(m_CharacterState);
 				m_AnimationTimer = 0;
 				m_AnimationDuration = 1.f;
+				ThrowGrenade();
 			}
 		}
 		if (sceneContext.pInput->IsActionTriggered(InputIds::CharacterSlash))
@@ -301,6 +298,7 @@ void Character::Update(const SceneContext& sceneContext)
 				m_pAnimator->SetAnimation(m_CharacterState);
 				m_AnimationTimer = 0;
 				m_AnimationDuration = 1.f;
+				SlapAxe();
 			}
 		}
 		if (sceneContext.pInput->IsActionTriggered(InputIds::CharacterShoot))
@@ -311,11 +309,39 @@ void Character::Update(const SceneContext& sceneContext)
 				m_pAnimator->SetAnimation(m_CharacterState);
 				m_AnimationTimer = 0;
 				m_AnimationDuration = .5f;
+				Shoot();
 			}
 		}
 
 
 	}
+}
+
+void Character::ThrowGrenade()
+{
+	auto forward = GetTransform()->GetForward();
+	forward.y += 5.f;
+	auto activeScene = SceneManager::Get()->GetActiveScene();
+	auto grenade = activeScene->AddChild(new Bullet{ forward, L"Friendly" },true);
+	auto pos = GetTransform()->GetPosition();
+	XMFLOAT3 bulletPos{};
+	XMStoreFloat3(&bulletPos, XMVectorAdd(XMLoadFloat3(&pos), XMLoadFloat3(&forward)));
+	grenade->GetTransform()->Translate(bulletPos);
+}
+
+void Character::Shoot()
+{
+	auto forward = GetTransform()->GetForward();
+	auto activeScene = SceneManager::Get()->GetActiveScene();
+	auto bullet = activeScene->AddChild(new Bullet{ forward, L"Friendly" },true);
+	auto pos = GetTransform()->GetPosition();
+	XMFLOAT3 bulletPos{};
+	XMStoreFloat3(&bulletPos, XMVectorAdd(XMLoadFloat3(&pos), XMLoadFloat3(&forward) * m_CharacterDesc.controller.radius * 1.2f));
+	bullet->GetTransform()->Translate(bulletPos);
+}
+
+void Character::SlapAxe()
+{
 }
 
 void Character::DrawImGui()
@@ -356,4 +382,8 @@ void Character::DrawImGui()
 			m_pCameraComponent->SetActive(isActive);
 		}
 	}
+}
+
+void Character::GetHit()
+{
 }
