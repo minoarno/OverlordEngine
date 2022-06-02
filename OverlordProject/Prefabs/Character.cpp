@@ -322,7 +322,8 @@ void Character::ThrowGrenade()
 	auto forward = GetTransform()->GetForward();
 	forward.y += 5.f;
 	auto activeScene = SceneManager::Get()->GetActiveScene();
-	auto grenade = activeScene->AddChild(new Bullet{ forward, L"Friendly" },true);
+	auto grenade = activeScene->AddChild(new Bullet{ forward},true);
+	grenade->SetTag(GetTag());
 	auto pos = GetTransform()->GetPosition();
 	XMFLOAT3 bulletPos{};
 	XMStoreFloat3(&bulletPos, XMVectorAdd(XMLoadFloat3(&pos), XMLoadFloat3(&forward)));
@@ -331,9 +332,11 @@ void Character::ThrowGrenade()
 
 void Character::Shoot()
 {
-	auto forward = GetTransform()->GetForward();
+	XMFLOAT3 forward{};
+	XMStoreFloat3(&forward, XMLoadFloat3(&GetTransform()->GetForward()) * -1);
 	auto activeScene = SceneManager::Get()->GetActiveScene();
-	auto bullet = activeScene->AddChild(new Bullet{ forward, L"Friendly" },true);
+	auto bullet = activeScene->AddChild(new Bullet{ forward},true);
+	bullet->SetTag(GetTag());
 	auto pos = GetTransform()->GetPosition();
 	XMFLOAT3 bulletPos{};
 	XMStoreFloat3(&bulletPos, XMVectorAdd(XMLoadFloat3(&pos), XMLoadFloat3(&forward) * m_CharacterDesc.controller.radius * 1.2f));
