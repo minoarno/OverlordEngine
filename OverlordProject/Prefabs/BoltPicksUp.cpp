@@ -12,15 +12,14 @@ BoltPicksUp::BoltPicksUp()
 
 void BoltPicksUp::Initialize(const SceneContext&)
 {
-	m_pRigid = AddComponent(new RigidBodyComponent());
-	m_pRigid->SetKinematic(true);
+	m_pRigid = AddComponent(new RigidBodyComponent(true));
 
-	float scale{ .4f };
+	float scale{ 1.f };
 	const auto pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
-	m_pRigid->AddCollider(PxBoxGeometry{ scale,scale,scale * 2.f }, *pDefaultMaterial, true);
+	m_pRigid->AddCollider(PxBoxGeometry{ scale,scale,scale }, *pDefaultMaterial, true);
 
 	const auto pMat = MaterialManager::Get()->CreateMaterial<ColorMaterial>();
-	pMat->SetColor(DirectX::XMFLOAT4{ (GetTag() == L"Enemy") ? DirectX::Colors::DarkRed : DirectX::Colors::DarkBlue });
+	pMat->SetColor(DirectX::XMFLOAT4{ DirectX::Colors::DimGray });
 
 	//Character Mesh
 	//**************
@@ -36,14 +35,30 @@ void BoltPicksUp::Initialize(const SceneContext&)
 
 }
 
-void BoltPicksUp::Update(const SceneContext&)
+void BoltPicksUp::Update(const SceneContext& sceneContext)
 {
+	m_Rotation += m_RotationSpeed * sceneContext.pGameTime->GetElapsed();
+	GetTransform()->Rotate(m_Rotation, 0, 0);
+
+	if (m_FlagForDelete)
+	{
+		auto activeScene = SceneManager::Get()->GetActiveScene();
+		activeScene->RemoveChild(this, true);
+	}
 }
 
-void BoltPicksUp::OnHit(GameObject* pTriggerObject, GameObject* pOtherObject, PxTriggerAction action)
+void BoltPicksUp::OnSceneDetach(GameScene* )
 {
-	if (pOtherObject->GetTag() == L"Friendly")
+	m_FlagForDelete = true;
+}
+
+void BoltPicksUp::OnHit(GameObject* , GameObject* pOtherObject, PxTriggerAction)
+{
+
+	if (pOtherObject->GetTag() == L"Friendly" && !m_FlagForDelete)
 	{
 		HUD::Get()->IncreaseBolts(m_Score);
+
+		m_FlagForDelete = true;
 	}
 }

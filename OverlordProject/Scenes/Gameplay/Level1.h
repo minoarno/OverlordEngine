@@ -37,7 +37,6 @@ private:
 
 	//HUD and UI
 	std::vector<Button*> m_pButtons;
-	HUD* m_pHUD;
 
 	//Audio
 	FMOD::Sound* m_pBackgroundSoundFx;
@@ -46,5 +45,8 @@ private:
 
 	//Post Processing
 	PostBloom* m_pPostBloom;
+
+	void RemoveEnemies();
+	void SpawnEnemies();
 };
 

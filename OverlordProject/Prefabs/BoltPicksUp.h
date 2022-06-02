@@ -14,9 +14,15 @@ protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;
 
+	void OnSceneDetach(GameScene* pScene) override;
+
 	void OnHit(GameObject* pTriggerObject, GameObject* pOtherObject, PxTriggerAction action);
 private:
 	int m_Score{ 50 };
+	float m_RotationSpeed{ 90.f };
+	float m_Rotation{ 0.f };
 	RigidBodyComponent* m_pRigid{ nullptr };
+
+	bool m_FlagForDelete{ false };
 };
 

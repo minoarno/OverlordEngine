@@ -2,6 +2,8 @@
 #include "HUD.h"
 #include "Prefabs/UI/Text.h"
 
+HUD* HUD::m_pHUD{ nullptr };
+
 HUD::HUD()
 	: GameObject{ }
 	, m_AmountOfBoltsCollected{ 0 }
@@ -35,6 +37,7 @@ void HUD::Draw(const SceneContext& sceneContext)
 void HUD::SetAmountBolts(int amount)
 {
 	m_AmountOfBoltsCollected = amount;
+	UpdateBoltsText();
 }
 
 void HUD::IncreaseBolts(int amount)

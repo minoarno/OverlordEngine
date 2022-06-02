@@ -9,6 +9,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include "BoltPicksUp.h"
 
 #ifndef HALF_PI
 	#define HALF_PI M_PI / 2.0
@@ -46,11 +47,15 @@ void RobotEnemy::GetHit()
 		if (m_Health <= 0)
 		{
 			m_EnemyAnimation = EnemyAnimation::Dying;
-			m_IsAlive = false;
 		}
 
 		m_pAnimator->SetAnimation(m_EnemyAnimation);
 	}
+}
+
+bool RobotEnemy::GetFlagToDelete() const
+{
+	return m_FlagForDelete;
 }
 
 void RobotEnemy::Initialize(const SceneContext&)
@@ -109,14 +114,10 @@ void RobotEnemy::Initialize(const SceneContext&)
 
 void RobotEnemy::Update(const SceneContext& sceneContext)
 {
+	if (m_FlagForDelete)return;
+
 	constexpr float epsilon{ 0.01f }; //Constant that can be used to compare if a float is near zero
 	float elapsedTime = sceneContext.pGameTime->GetElapsed();
-
-	if (!m_IsAlive)
-	{
-
-		return;
-	}
 
 	if (m_EnemyAnimation == EnemyAnimation::Dying)
 	{
@@ -124,13 +125,16 @@ void RobotEnemy::Update(const SceneContext& sceneContext)
 		if (m_Timer > m_DurationDying)
 		{
 			m_Timer = 0.f;
-			m_EnemyAnimation = EnemyAnimation::Running;
 			m_pAnimator->SetAnimation(m_EnemyAnimation);
+
+			auto activeScene = SceneManager::Get()->GetActiveScene();
+			auto bolt = activeScene->AddChild(new BoltPicksUp{}, true);
+			bolt->GetTransform()->Translate(GetTransform()->GetWorldPosition());
+
+			m_FlagForDelete = true;
 		}
-		else
-		{
-			return;
-		}
+		return;
+		
 	}
 	else if (m_EnemyAnimation == EnemyAnimation::GettingHit)
 	{
@@ -140,6 +144,7 @@ void RobotEnemy::Update(const SceneContext& sceneContext)
 			m_Timer = 0.f;
 			m_EnemyAnimation = EnemyAnimation::Idle;
 			m_pAnimator->SetAnimation(m_EnemyAnimation);
+			m_pEmitter->GetGameObject()->SetActive(false);
 		}
 		else
 		{

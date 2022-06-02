@@ -57,6 +57,7 @@ public:
 	void GetHit();
 
 	std::wstring GetTag()const override { return L"Enemy"; };
+	bool GetFlagToDelete()const;
 protected:
 	void Initialize(const SceneContext& sceneContext) override;
 	void Update(const SceneContext& sceneContext) override;
@@ -86,6 +87,7 @@ protected:
 	float m_DurationDying{ 0.5f };
 
 	int m_Health{ 3 };
-	bool m_IsAlive{ true };
+
+	bool m_FlagForDelete{ false };
 };
 

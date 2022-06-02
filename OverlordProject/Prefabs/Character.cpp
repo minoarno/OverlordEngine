@@ -68,6 +68,8 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 
 void Character::Update(const SceneContext& sceneContext)
 {
+	if (!sceneContext.pGameTime->IsRunning())return;
+
 	if (m_pCameraComponent->IsActive())
 	{
 		constexpr float epsilon{ 0.01f }; //Constant that can be used to compare if a float is near zero

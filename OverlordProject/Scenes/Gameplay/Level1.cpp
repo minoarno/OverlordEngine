@@ -22,7 +22,6 @@
 
 Level1::Level1()
 	: GameScene{L"Level 1"}
-	, m_pHUD{ nullptr }
 	, m_pBackgroundSoundFx{ nullptr }
 	, m_pSoundEffectGroup{ nullptr }
 	, m_pPostBloom{ nullptr }
@@ -101,7 +100,7 @@ void Level1::Initialize()
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
 	//HUD
-	m_pHUD = AddChild(new HUD{});
+	AddChild(new HUD{});
 
 	//In Game Buttons
 	int index = 0;
@@ -124,12 +123,6 @@ void Level1::Initialize()
 
 	//Enemies
 	m_PositionsEnemy.push_back(std::make_pair(XMFLOAT3{ 0,9.8f,0 }, XMFLOAT3{ 20,9.8f,0 }));
-
-	index = 0;
-	m_pEnemies.emplace_back(AddChild(new RobotEnemy{}));
-	m_pEnemies[index]->GetTransform()->Translate(m_PositionsEnemy[index].first);
-	m_pEnemies[index]->SetPositions(m_PositionsEnemy[index].first, m_PositionsEnemy[index].second);
-	m_pEnemies[index]->SetCharacter(m_pCharacter);
 
 	//Audio
 	auto pFmodSystem = SoundManager::Get()->GetSystem();
@@ -200,7 +193,15 @@ void Level1::Update()
 		}
 	}
 
-
+	//Clean up enemies
+	for (size_t i = 0; i < m_pEnemies.size(); i++)
+	{
+		if (m_pEnemies[i] != nullptr && m_pEnemies[i]->GetFlagToDelete())
+		{
+			RemoveChild(m_pEnemies[i],true);
+			m_pEnemies[i] = nullptr;
+		}
+	}
 }
 
 void Level1::Draw()
@@ -229,14 +230,11 @@ void Level1::Reset()
 	m_pCharacter->GetTransform()->Rotate(0.f, 180.f, 0.f);
 
 	//Enemies
-	for (size_t i = 0; i < m_pEnemies.size(); i++)
-	{
-		m_pEnemies[i]->GetTransform()->Translate(m_PositionsEnemy[i].first);
-		m_pEnemies[i]->Reset();
-	}
+	RemoveEnemies();
+	SpawnEnemies();
 
 	//HUD
-	m_pHUD->SetAmountBolts(0);
+	HUD::Get()->SetAmountBolts(0);
 
 	auto pFmodSystem = SoundManager::Get()->GetSystem();
 	pFmodSystem->recordStop(-1);
@@ -244,4 +242,27 @@ void Level1::Reset()
 	m_pSoundEffectGroup->setVolume(m_MusicVolume);
 
 	m_SceneContext.pGameTime->Start();
+}
+
+void Level1::SpawnEnemies()
+{
+	for (size_t i = 0; i < m_PositionsEnemy.size(); i++)
+	{
+		m_pEnemies.emplace_back(AddChild(new RobotEnemy{}));
+		m_pEnemies[i]->GetTransform()->Translate(m_PositionsEnemy[i].first);
+		m_pEnemies[i]->SetPositions(m_PositionsEnemy[i].first, m_PositionsEnemy[i].second);
+		m_pEnemies[i]->SetCharacter(m_pCharacter);
+	}
+}
+
+void Level1::RemoveEnemies()
+{
+	for (size_t i = 0; i < m_pEnemies.size(); i++)
+	{
+		if ( m_pEnemies[i] != nullptr)
+		{
+			RemoveChild(m_pEnemies[i], true);
+		}
+	}
+	m_pEnemies.clear();
 }
