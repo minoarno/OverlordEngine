@@ -14,7 +14,7 @@ void WinBolt::Initialize(const SceneContext&)
 {
 	m_pRigid = AddComponent(new RigidBodyComponent(true));
 
-	float scale{ .4f };
+	float scale{ 1.f };
 	const auto pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
 	m_pRigid->AddCollider(PxBoxGeometry{ scale,scale,scale * 2.f }, *pDefaultMaterial, true);
 
@@ -24,9 +24,10 @@ void WinBolt::Initialize(const SceneContext&)
 	//Character Mesh
 	//**************
 	const auto visuals = AddChild(new GameObject);
-	const auto pModel = visuals->AddComponent(new ModelComponent(L"Meshes/Bullet.ovm"));
+	const auto pModel = visuals->AddComponent(new ModelComponent(L"Meshes/Bolt.ovm"));
 	pModel->SetMaterial(pMat);
 	visuals->GetTransform()->Scale(scale, scale, scale);
+	visuals->GetTransform()->Rotate(90,0,0);
 
 	SetOnTriggerCallBack([=](GameObject* pTriggerObject, GameObject* pOtherObject, PxTriggerAction action)
 		{

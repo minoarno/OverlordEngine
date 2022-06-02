@@ -142,10 +142,10 @@ void Level1::Initialize()
 	m_pLostScreen->SetActive(false);
 	
 	//Enemies
-	//m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 64.f,3.6f,74.f }, XMFLOAT3{ 43.6f,3.6f,52.2f }));
-	//m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 50.f,3.6f,-21.5f }, XMFLOAT3{ 63.f,3.6f, -33.5f }));
-	//m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 97.5f,-42.f,-34.f }, XMFLOAT3{ 85.f, -42.f, -27.f }));
-	//m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 121.f,-42.f,-24.f }, XMFLOAT3{ 120.f, -42.f, -38.f }));
+	m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 64.f,3.6f,74.f }, XMFLOAT3{ 43.6f,3.6f,52.2f }));
+	m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 50.f,3.6f,-21.5f }, XMFLOAT3{ 63.f,3.6f, -33.5f }));
+	m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 97.5f,-42.f,-34.f }, XMFLOAT3{ 85.f, -42.f, -27.f }));
+	m_PositionsEnemy.emplace_back(std::make_pair(XMFLOAT3{ 121.f,-42.f,-24.f }, XMFLOAT3{ 120.f, -42.f, -38.f }));
 
 
 	//Crates
@@ -162,7 +162,7 @@ void Level1::Initialize()
 	auto fmodResult = SoundManager::Get()->GetSystem()->createChannelGroup("Sound Effects", &m_pSoundEffectGroup);
 	SoundManager::Get()->ErrorCheck(fmodResult);
 
-	m_MusicVolume = 0.f;
+	m_MusicVolume = 0.3f;
 
 	SoundManager::Get()->GetSystem()->createStream("Resources/Audio/ReadyToFight.mp3", FMOD_DEFAULT, nullptr, &m_pBackgroundSoundFx);
 	SoundManager::Get()->ErrorCheck(fmodResult);
